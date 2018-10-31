@@ -11,6 +11,8 @@
                 $fileExt = File::extension($pathPhoto);
                 $dirName = File::dirname($pathPhoto);
                 $fullPath = "$dirName/$fileName-small.$fileExt";
+            } else {
+                $fullPath = asset('images/default-picture-small.png');
             }
             @endphp
             <div class="dropdown profile-element"> <span>

@@ -73,6 +73,31 @@
 				</div>
 			</form>
 		</div>
+		
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>Data Pembayaran Semester</h5>
+				
+				
+			</div>
+			<div class="ibox-content">
+				<table class="table table-bordered table-hover" id="table-semester">
+					<thead>
+						<tr>
+							<th>Semester</th>
+							<th>Transaksi ID</th>
+							<th>Jumlah Bayar</th>
+							<th>Tanggal Bayar</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="content-semester">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
 				<h5>Form Pembayaran Semester</h5>
@@ -94,50 +119,26 @@
 						</div>
 					</div>
 					<div class="form-group">
-							<label class="control-label col-lg-2">Tanggal Pembayaran</label>
-							<div class="col-lg-6">
-								<input class="form-control" type="date"  value="{{ date('Y-m-d') }}" name="tanggal_bayar">
-							</div>
-							<label class="control-label col-lg-2">Status</label>
-							<div class="col-lg-2">
-								<select class="form-control" name="status" id="status">
-									@foreach (\Config::get('enums.status_bayar') as $k => $v)
-									<option value="{{ $v }}">{{ $v }}</option>
-									@endforeach
-								</select>
-							</div>
-							
+						<label class="control-label col-lg-2">Tanggal Pembayaran</label>
+						<div class="col-lg-6">
+							<input class="form-control" type="date"  value="{{ date('Y-m-d') }}" name="tanggal_bayar">
 						</div>
+						<label class="control-label col-lg-2">Status</label>
+						<div class="col-lg-2">
+							<select class="form-control" name="status" id="status">
+								@foreach (\Config::get('enums.status_bayar') as $k => $v)
+								<option value="{{ $v }}">{{ $v }}</option>
+								@endforeach
+							</select>
+						</div>
+
+					</div>
 					
 					
 					<div class="text-center">
 						<button id="btn-simpan" type="button" class="btn btn-primary">Simpan</button>
 					</div>
 				</form>
-			</div>
-		</div>
-		<div class="ibox float-e-margins">
-			<div class="ibox-title">
-				<h5>Data Pembayaran Semester</h5>
-				
-				
-			</div>
-			<div class="ibox-content">
-				<table class="table table-bordered" id="table-semester">
-					<thead>
-						<tr>
-							<th>Semester</th>
-							<th>Transaksi ID</th>
-							<th>Jumlah Bayar</th>
-							<th>Tanggal Bayar</th>
-							<th>Status</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody id="content-semester">
-
-					</tbody>
-				</table>
 			</div>
 		</div>
 	</div>
@@ -334,7 +335,7 @@
 	{
 		$content.html("");
 		if (datas.pembayaran_semester.length > 0) {
- 			$.each(datas.pembayaran_semester, function(index, semester) {
+			$.each(datas.pembayaran_semester, function(index, semester) {
 				$.each(semester.pembayaran_semester_det, function(index2, detail) {
 					let tr = $("<tr/>", {
 
@@ -379,6 +380,17 @@
 						width : '1%',
 						'white-space' : 'nowrap',
 					})
+					.append($("<button/>", {
+
+						text : 'Print',
+						class : 'btn btn-info',
+
+					})
+					.click(function(e) {
+						window.open('{{ url('pemasukan/pembayaran_semester/') }}' + '\/' +detail.id+'/kwitansi'); 
+
+					})
+					)
 					.append($("<button/>", {
 
 						text : 'Update',

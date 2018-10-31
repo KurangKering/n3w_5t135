@@ -75,9 +75,34 @@
 		</div>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
+				<h5>Data Pembayaran Pendaftaran</h5>
+			</div>
+			<div class="ibox-content">
+				<table class="table table-bordered table-hover" id="table-data">
+					<thead>
+						<tr>
+							<th rowspan="2" width="1%" nowrap style="vertical-align: middle; text-align: center">Transaksi ID</th>
+							<th rowspan="2" style="vertical-align: middle; text-align: center">Tanggal Bayar</th>
+							<th colspan="3" class="text-center">Pembayaran</th>
+							<th rowspan="2" class="text-center" style="vertical-align: middle">Jumlah</th>
+							<th rowspan="2" class="text-center" style="vertical-align: middle">Action</th>
+						</tr>
+						<tr>
+							<th>Pustaka</th>
+							<th>Almamater</th>
+							<th>Pendaftaran</th>
+						</tr>
+					</thead>
+					<tbody id="content-pendaftaran">
+					</tbody> 
+				</table>
+			</div>
+		</div>
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
 				<h5>Form Pembayaran Pendaftaran</h5>
 				<div class="ibox-tools">
-					
+
 				</div>
 				<form method="POST" id="form-pendaftaran" class="form-horizontal">
 					<div class="ibox-content">
@@ -101,7 +126,7 @@
 								<input class="form-control" type="number" name="bayar_pendaftaran">
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label class="control-label col-lg-2">Tanggal Pembayaran</label>
 							<div class="col-lg-6">
@@ -115,7 +140,7 @@
 									@endforeach
 								</select>
 							</div>
-							
+
 						</div>
 
 						<div class="text-center">
@@ -125,34 +150,7 @@
 				</form>
 			</div>
 		</div>
-		<div class="ibox float-e-margins">
-			<div class="ibox-title">
-				<h5>Data Pembayaran Pendaftaran</h5>
-				
-				
-			</div>
-			<div class="ibox-content">
-				<table class="table table-bordered" id="table-data">
-					<thead>
-						<tr>
-							<th rowspan="2" width="1%" nowrap style="vertical-align: middle; text-align: center">Transaksi ID</th>
-							<th rowspan="2" style="vertical-align: middle; text-align: center">Tanggal Bayar</th>
-							<th colspan="3" class="text-center">Pembayaran</th>
-							<th rowspan="2" class="text-center" style="vertical-align: middle">Jumlah</th>
-							<th rowspan="2" class="text-center" style="vertical-align: middle">Action</th>
-						</tr>
-						<tr>
-							<th>Pustaka</th>
-							<th>Almamater</th>
-							<th>Pendaftaran</th>
-						</tr>
-					</thead>
-					<tbody id="content-pendaftaran">
 
-					</tbody>
-				</table>
-			</div>
-		</div>
 	</div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -171,7 +169,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						
+
 					</tbody>
 				</table>  
 			</div>
@@ -279,6 +277,17 @@
 					width : '1%',
 					'white-space' : 'nowrap',
 				})
+				.append($("<button/>", {
+
+					text : 'Print',
+					class : 'btn btn-info',
+
+				})
+				.click(function(e) {
+					window.open('{{ url('pemasukan/pendaftaran/') }}' + '\/' +pemb.id+'/kwitansi'); 
+
+				})
+				)
 				.append($("<button/>", {
 
 					text : 'Update',

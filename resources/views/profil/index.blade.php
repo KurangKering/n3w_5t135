@@ -141,7 +141,7 @@
 
 				<div id="container-photo">
 					<div class="m-b-sm text-center">
-						<img  class="" id="pas_photo" src="{{ $user->file_photo ? asset('storage/'.$user->file_photo) : Storage::url('photo-profil/default-profile.jpg')}}">
+						<img  class="" id="pas_photo" src="{{ $user->file_photo ? asset('storage/'.$user->file_photo) : asset('images/default-picture.png')}}">
 					</div>
 				</div>
 				<br>

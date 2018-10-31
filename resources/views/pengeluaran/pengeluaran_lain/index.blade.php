@@ -99,6 +99,27 @@
 				$(win.document.body).find('table')
 				.addClass('compact')
 				.css('font-size', 'inherit');
+				$trHead = $(win.document.body).find('table').find('thead').find("tr:first").find("th:first");
+				$("<td/>", {
+					text: 'No',
+				})
+				.css({
+					'font-weight': 'bold',
+					'width' : '1%',
+					'white-space' : 'nowrap',
+				}).insertBefore($trHead);
+
+				$trBody = $(win.document.body).find('table').find('tbody').find("tr");
+				$.each($trBody, function(index, val) {
+					$("<td/>", {
+						text: (index + 1),
+					})
+					.css({
+						'width' : '1%',
+						'white-space' : 'nowrap',
+					})
+					.insertBefore($(val).find("td:first"));
+				});
 			},
 			pageSize : "A4",
 			orientation : 'portrait',

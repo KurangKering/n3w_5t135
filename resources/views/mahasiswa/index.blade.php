@@ -65,6 +65,7 @@
 @endsection
 @section('custom_js')
 <script>
+	let wwin = null;
 	let table_mahasiswa = $("#table-mahasiswa").DataTable({
 		dom:  '<"html5buttons"B>lfrtip',
 
@@ -72,6 +73,8 @@
 		
 		{extend: 'print',
 		customize: function (win){
+			wwin = win;
+
 			$(win.document.body).addClass('white-bg');
 			$(win.document.body).css('font-size', '10px');
 			$(win.document.body).find('h1').css(
@@ -85,6 +88,29 @@
 			$(win.document.body).find('table')
 			.addClass('compact')
 			.css('font-size', 'inherit');
+
+			$trHead = $(win.document.body).find('table').find('thead').find("tr:first").find("th:first");
+			$("<td/>", {
+				text: 'No',
+			})
+			.css({
+				'font-weight': 'bold',
+				'width' : '1%',
+				'white-space' : 'nowrap',
+			}).insertBefore($trHead);
+
+			$trBody = $(win.document.body).find('table').find('tbody').find("tr");
+			$.each($trBody, function(index, val) {
+				$("<td/>", {
+					text: (index + 1),
+				})
+				.css({
+					'width' : '1%',
+					'white-space' : 'nowrap',
+				})
+				.insertBefore($(val).find("td:first"));
+			});
+			
 		},
 		pageSize : "A4",
 		orientation : 'portrait',
