@@ -72,9 +72,13 @@ class PegawaiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-    	$pegawai = Pegawai::find($id);
+    	$pegawai = Pegawai::findOrFail($id);
+        $pegawai->tanggal_lahir_manusia = indonesian_date($pegawai->tanggal_lahir);
+        if ($request->wantsJson()) {
+            return $pegawai;
+        }
     	return view('pegawai.detail', compact('pegawai'));
     }
 

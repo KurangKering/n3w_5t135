@@ -145,6 +145,28 @@ td, th {
 				'font-weight' : 'bold',
 			}
 			);
+
+			$trHead = $(win.document.body).find('table').find('thead').find("tr:first").find("th:first");
+			$("<td/>", {
+				text: 'No',
+			})
+			.css({
+				'font-weight': 'bold',
+				'width' : '1%',
+				'white-space' : 'nowrap',
+			}).insertBefore($trHead);
+			$trBody = $(win.document.body).find('table').find('tbody').find("tr");
+			$.each($trBody, function(index, val) {
+				$("<td/>", {
+					text: (index + 1),
+				})
+				.css({
+					'width' : '1%',
+					'white-space' : 'nowrap',
+				})
+				.insertBefore($(val).find("td:first"));
+			});
+
 			$(win.document.body).find('table')
 			.find('tbody')
 			.append($("<tr/>")
@@ -157,7 +179,7 @@ td, th {
 					'font-weight' : 'bold',
 				})
 				.attr({
-					'colspan' : 4
+					'colspan' : 5
 				}))
 				.append($("<td/>", {
 					text : $pemasukan.text(),
@@ -172,7 +194,7 @@ td, th {
 					'font-weight' : 'bold',
 				})
 				.attr({
-					'colspan' : 4
+					'colspan' : 5
 				}))
 				.append($("<td/>", {
 					text : $pengeluaran.text(),
@@ -187,7 +209,7 @@ td, th {
 					'font-weight' : 'bold',
 				})
 				.attr({
-					'colspan' : 4
+					'colspan' : 5
 				}))
 				.append($("<td/>", {
 					text : $seluruhnya.text(),

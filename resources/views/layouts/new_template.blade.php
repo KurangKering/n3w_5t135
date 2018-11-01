@@ -14,8 +14,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
+    
     <title>STIES</title>
+    <link rel="icon" href="{{ asset('templates/img/logo-1.png') }}">
 
     <link href="{{ asset('templates/inspinia_271/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('templates/inspinia_271/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
@@ -30,6 +31,7 @@
     {{-- <link href="{{ asset('templates/inspinia_271/css/plugins/dataTables/dataTables.min.css') }}" rel="stylesheet"> --}}
 
     <link href="{{ asset('plugins/jasny-bootstrap/jasny-bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('plugins/iziModal/css/iziModal.min.css') }}" rel="stylesheet" />
     
 
     <link href="{{ asset('templates/inspinia_271/css/animate.css') }}" rel="stylesheet">
@@ -48,44 +50,44 @@
                 <nav class="navbar navbar-static-top black-bg" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header">
                       {{--   <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a> --}}
-                        
-                        <form class="navbar-form-custom">
-                            <a class="navbar-brand-img" href="{{ url('/') }}"><img style="width: 100%; height: 100%" src="{{ asset('templates/img/logo11.png') }}"></a>
-                        </form>
 
-                    </div>
-                    <ul class="nav navbar-top-links navbar-right">
-                        <li>
-                            <span class="m-r-sm text-muted welcome-message"></span>
-                        </li>
+                      <form class="navbar-form-custom">
+                        <a class="navbar-brand-img" href="{{ url('/') }}"><img style="width: 100%; height: 100%" src="{{ asset('templates/img/logo11.png') }}"></a>
+                    </form>
 
-
-                        <li>
-                            <a onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">
-                            <i class="fa fa-sign-out"></i> Log out
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <span class="m-r-sm text-muted welcome-message"></span>
                     </li>
-                </ul>
 
-            </nav>
-        </div>
-        {{-- @yield('page-heading') --}}
-        <div class="wrapper wrapper-content">
-            @yield('content')
-        </div>
-        <div class="footer">
-            <div class="pull-right">
-            </div>
-            <div>
-                <strong>Copyright</strong> Example Company &copy; 2014-2017
-            </div>
-        </div>
 
+                    <li>
+                        <a onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();">
+                        <i class="fa fa-sign-out"></i> Log out
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </li>
+            </ul>
+
+        </nav>
     </div>
+    {{-- @yield('page-heading') --}}
+    <div class="wrapper wrapper-content">
+        @yield('content')
+    </div>
+    <div class="footer">
+        <div class="pull-right">
+        </div>
+        <div>
+            <strong>Copyright</strong> Example Company &copy; 2014-2017
+        </div>
+    </div>
+
+</div>
 
 
 
@@ -111,6 +113,7 @@
 <script src="{{ asset('/plugins/sweetalert/dist/sweetalert.min.js') }}"></script>
 <script src="{{ asset('/plugins/ckeditor/ckeditor.js') }}"></script>
 <script src="{{ asset('plugins/jasny-bootstrap/jasny-bootstrap.min.js') }}"></script>
+<script src="{{ asset('plugins/iziModal/js/iziModal.min.js') }}"></script>
 
 
 <!-- jQuery UI -->

@@ -150,6 +150,7 @@
 						<th>Transaksi ID</th>
 						<th>Jumlah Bayar</th>
 						<th>Tanggal Bayar</th>
+						<th class="text-center">Total Bayar</th>
 						<th class="text-center">Status</th>
 					</tr>
 				</thead>
@@ -167,6 +168,9 @@
 						<td>{{ rupiah($det->jumlah_bayar) }}</td>
 						<td>{{ indonesian_date($det->tanggal_bayar) }}</td>
 						@if ($ii == 0)
+						<td style="vertical-align: middle; text-align: center" rowspan="{{ sizeof($pembayaran->pembayaran_semester_det) }}">
+							{{ rupiah($pembayaran->pembayaran_semester_det->sum('jumlah_bayar')) }}
+						</td>
 						<td style="vertical-align: middle; text-align: center" rowspan="{{ sizeof($pembayaran->pembayaran_semester_det) }}">
 							{{ $pembayaran->ket_bayar }}
 						</td>

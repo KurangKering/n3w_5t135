@@ -88,6 +88,7 @@
 							<th>Transaksi ID</th>
 							<th>Jumlah Bayar</th>
 							<th>Tanggal Bayar</th>
+							<th>Total Bayar</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -361,7 +362,17 @@
 					.append($("<td/>", {
 						text : detail.tgl_bayar_manusia,
 					}));
+
 					if (index2 == 0) {
+						tr.append($("<td/>", {
+							text : semester.total_manusia,
+						})
+						.css({
+							'text-align': 'center'
+						})
+						.attr({
+							rowspan: semester.pembayaran_semester_det.length,
+						}));
 						tr.append($("<td/>", {
 							text : semester.ket_bayar,
 						})
@@ -370,7 +381,7 @@
 						})
 						.attr({
 							rowspan: semester.pembayaran_semester_det.length,
-						}))	
+						}));	
 					}	
 					
 					tr.append($("<td/>", {

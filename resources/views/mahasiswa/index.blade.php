@@ -1,4 +1,7 @@
 @extends('layouts.new_template')
+@section('custom_css')
+@parent
+@endsection
 @section('page-heading')
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-lg-10">
@@ -50,6 +53,7 @@
 							<td>{{ $mahasiswa->no_hp }}</td>
 							<td class="text-center" width="1%" style="white-space: nowrap">
 								
+								<a onclick="show_modal('{{ $mahasiswa->id }}')" class="btn btn-info">Detail</a>
 								<a href="{{ route('mahasiswa.edit', $mahasiswa->id) }}" class="btn btn-primary">Edit</a>
 							</td>
 
@@ -61,11 +65,10 @@
 		</div>
 	</div>
 </div>
-
+@include('mahasiswa.modal_mahasiswa_detail')
 @endsection
 @section('custom_js')
 <script>
-	let wwin = null;
 	let table_mahasiswa = $("#table-mahasiswa").DataTable({
 		dom:  '<"html5buttons"B>lfrtip',
 

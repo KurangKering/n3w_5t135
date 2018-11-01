@@ -22,7 +22,7 @@
     <div class="middle-box text-center loginscreen animated fadeInDown">
         <div style="" class="">
             <div class="b-r-xl">
-                <img class="" style="width: 70%; height: 200px" src="{{ url('templates/img/logo.png') }}" alt="">
+                <img class="" style="width: 70%; height: 250px" src="{{ url('templates/img/logo.png') }}" alt="">
                 
             </div>
             <form class="m-t" role="form" method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}">

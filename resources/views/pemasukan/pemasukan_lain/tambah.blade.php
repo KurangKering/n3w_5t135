@@ -38,7 +38,7 @@
 				</div>
 			</div>
 			<div class="ibox-content">
-				<form class="form-horizontal" method="POST" action="{{ route('pemasukan_lain.store') }}">
+				<form class="form-horizontal" method="POST" action="{{ route('pemasukan_lain.store') }}" enctype="multipart/form-data">
 					@csrf
 					<div class="form-group">
 						<label class="control-label col-lg-2">Jenis Pembayaran</label>
@@ -65,13 +65,13 @@
 					<div class="form-group">
 						<label class="control-label col-lg-2">Tanggal Pembayaran</label>
 						<div class="col-lg-10">
-							<input class="form-control" type="date" value="{{ old("tanggal_bayar") }}" id="example-date-input" name="tanggal_bayar">
+							<input class="form-control" type="date" value="{{ old("tanggal_bayar") ?? date('Y-m-d') }}" id="example-date-input" name="tanggal_bayar">
 						</div>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-lg-2">Total Bayar</label>
 						<div class="col-lg-10">
-							<input class="form-control" name="total_bayar" value="{{ old('total_bayar') }}">
+							<input class="form-control" type="number" name="total_bayar" value="{{ old('total_bayar') }}">
 						</div>
 
 					</div>

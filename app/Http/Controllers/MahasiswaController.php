@@ -103,10 +103,14 @@ class MahasiswaController extends Controller
 
       if ($mahasiswa->pembayaran_semester) {
         $mahasiswa->pembayaran_semester->each(function($iii) {
-         $iii->pembayaran_semester_det->each(function($iiii) {
+          $iii->total = 0;
+         $iii->pembayaran_semester_det->each(function($iiii) use($iii) {
           $iiii->tgl_bayar_manusia = indonesian_date($iiii->tanggal_bayar);
           $iiii->jumlah_bayar_manusia = rupiah($iiii->jumlah_bayar);
+
+          $iii->total += $iiii->jumlah_bayar;
         });
+         $iii->total_manusia = rupiah($iii->total);
        });
       }
 

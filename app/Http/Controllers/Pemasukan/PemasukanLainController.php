@@ -45,7 +45,7 @@ class PemasukanLainController extends Controller
     {
 
         $this->validate($request, [
-
+            'lampiran' => 'sometimes|file|max:1000',
             'jenis_bayar' => 'required',
             'uraian' => 'required',
             'tanggal_bayar' => 'required',

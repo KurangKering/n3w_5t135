@@ -41,6 +41,8 @@
 							<td>{{ $pegawai->jenis_kelamin }}</td>
 							<td>{{ $pegawai->no_hp }}</td>
 							<td class="text-center" width="1%" style="white-space: nowrap">
+								<a onclick="show_modal('{{ $pegawai->id }}')" class="btn btn-info">Detail</a>
+
 								<a href="{{ route('pegawai.edit', $pegawai->id) }}" class="btn btn-primary">Edit</a>
 							</td>
 						</tr>
@@ -52,6 +54,7 @@
 		</div>
 	</div>
 </div>
+@include('pegawai.modal_pegawai_detail')
 @endsection
 @section('custom_js')
 <script>
