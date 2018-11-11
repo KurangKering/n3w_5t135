@@ -15,4 +15,8 @@ class Mahasiswa extends Model
 	{
 		return $this->hasOne('App\Pendaftaran');
 	}
+	public function pembangunan()
+	{
+		return $this->hasOne('App\Pembangunan');
+	}
 }

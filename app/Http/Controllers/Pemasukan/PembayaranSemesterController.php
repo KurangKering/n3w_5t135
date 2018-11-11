@@ -172,9 +172,10 @@ class PembayaranSemesterController extends Controller
       $kwitansi->nama_penerima = \Auth::user()->name;
       $kwitansi->nama_pembayar = $transaksi->pembayaran_semester->mahasiswa->nama_mhs;
 
-      $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
+      return view('kwitansi.template', compact('kwitansi'));
+      // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
 
-      return $pdf->stream($transaksi->pembayaran_semester->mahasiswa->nama_mhs.'-pembayaran_semester.pdf');
+      // return $pdf->stream($transaksi->pembayaran_semester->mahasiswa->nama_mhs.'-pembayaran_semester.pdf');
 
     }
 

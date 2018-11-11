@@ -39,8 +39,8 @@
             <td>{{ $pemasukan_lain->transaksi_id }}</td>
             <td>{{ $pemasukan_lain->jenis_bayar }}</td>
             <td>{{ $pemasukan_lain->uraian }}</td>
-            <td>{{ $pemasukan_lain->tanggal_bayar }}</td>
-            <td>{{ $pemasukan_lain->total_bayar }}</td>
+            <td>{{ indonesian_date($pemasukan_lain->tanggal_bayar, 'j F Y') }}</td>
+            <td>{{ rupiah($pemasukan_lain->total_bayar) }}</td>
             <td>{!! $pemasukan_lain->keterangan !!}</td>
             <td>
               @if ($pemasukan_lain->lampiran)

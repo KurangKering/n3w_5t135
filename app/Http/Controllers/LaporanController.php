@@ -32,6 +32,16 @@ class LaporanController extends Controller
             '=', 
             'pembayaran_semester_det.transaksi_id');
 
+        $pembangunan_det = DB::table('pembangunan_det')
+        ->select(
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
+                tanggal_bayar, 
+                jumlah_bayar as total_bayar'))
+        ->join('transaksis',
+            'transaksis.id',
+            '=', 
+            'pembangunan_det.transaksi_id');
+
         $pendaftaran_det = DB::table('pendaftaran_det')
         ->select(
             DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
@@ -75,6 +85,7 @@ class LaporanController extends Controller
         if ($from) {
             $pembayaran_gajis = $pembayaran_gajis->where('tanggal_bayar', '>=', $from);
             $pemasukan_lains = $pemasukan_lains->where('tanggal_bayar', '>=', $from);
+            $pembangunan_det = $pembangunan_det->where('tanggal_bayar', '>=', $from);
             $pendaftaran_det = $pendaftaran_det->where('tanggal_bayar', '>=', $from);
             $pembayaran_semester_det = $pembayaran_semester_det->where('tanggal_bayar', '>=', $from);
             $pengeluaran_lains = $pengeluaran_lains->where('tanggal_bayar', '>=', $from);
@@ -82,6 +93,7 @@ class LaporanController extends Controller
         if ($end) {
             $pembayaran_gajis = $pembayaran_gajis->where('tanggal_bayar', '<=', $end);
             $pemasukan_lains = $pemasukan_lains->where('tanggal_bayar', '<=', $end);
+            $pembangunan_det = $pembangunan_det->where('tanggal_bayar', '<=', $from);
             $pendaftaran_det = $pendaftaran_det->where('tanggal_bayar', '<=', $end);
             $pembayaran_semester_det = $pembayaran_semester_det->where('tanggal_bayar', '<=', $end);
             $pengeluaran_lains = $pengeluaran_lains->where('tanggal_bayar', '<=', $end);
@@ -91,6 +103,7 @@ class LaporanController extends Controller
 
 
         $transaksis = $pembayaran_semester_det
+        ->union($pembangunan_det)
         ->union($pendaftaran_det)
         ->union($pemasukan_lains)
         ->union($pembayaran_gajis)
@@ -118,7 +131,7 @@ class LaporanController extends Controller
         $transaksis->where('jenis_transaksi', 'Pengeluaran Lain')->each(function($i) use ($pengeluaran_lain) {
             $i->jenis_lain = $pengeluaran_lain->where('transaksi_id', $i->transaksi_id)->first()->jenis_bayar;
         });
-        
+
 
 
         return view('laporan.index', compact('transaksis', 'total', 'from', 'end', 'pemasukan_lain', 'pengeluaran_lain'));

@@ -178,10 +178,10 @@ class PengeluaranLainController extends Controller
       $kwitansi->jumlah_bayar = $transaksi->total_bayar;
       $kwitansi->nama_penerima = \Auth::user()->name;
       $kwitansi->nama_pembayar = '';
+      return view('kwitansi.template', compact('kwitansi'));
+      // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
 
-      $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
-
-      return $pdf->stream($transaksi->id .'-pemasukan_lain.pdf');
+      // return $pdf->stream($transaksi->id .'-pemasukan_lain.pdf');
 
   }
 }

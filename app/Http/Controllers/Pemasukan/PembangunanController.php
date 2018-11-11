@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Pemasukan;
+namespace App\Http\Controllers\pemasukan;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Pendaftaran;
-use App\Pendaftaran_det;
-use App\Mahasiswa;
+
 use App\Transaksi;
-use App\Pemasukan;
+use App\Pembangunan;
+use App\Pembangunan_det;
+use App\Mahasiswa;
 use LogHelper;
 
-class PendaftaranController extends Controller
+class PembangunanController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -21,12 +20,9 @@ class PendaftaranController extends Controller
      */
     public function index()
     { 
-
-
-      $pendaftarans = Pendaftaran_det::with('pendaftaran.mahasiswa')->get();
-      return view('pemasukan.pendaftaran.index', compact('pendaftarans'));
+      $pembangunans = Pembangunan_det::with('pembangunan.mahasiswa')->get();
+      return view('pemasukan.pembangunan.index', compact('pembangunans'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -34,7 +30,7 @@ class PendaftaranController extends Controller
      */
     public function create()
     {
-      return view('pemasukan.pendaftaran.tambah');
+      return view('pemasukan.pembangunan.tambah');
     }
 
 
@@ -48,21 +44,19 @@ class PendaftaranController extends Controller
     {
 
      $this->validate($request, [
-      'bayar_pustaka' => 'required|numeric',
-      'bayar_alma' => 'required|numeric',
-      'bayar_pendaftaran' => 'required|numeric',
+      'jumlah_bayar' => 'required|numeric',
       'tanggal_bayar' => 'required',
       'mahasiswa_id' => 'required',
     ]);
 
 
      $transaksi = new Transaksi();
-     $transaksi->jenis_transaksi = "Pendaftaran";
+     $transaksi->jenis_transaksi = "Pembangunan";
      $transaksi->save();
 
 
-     
-     $pendaftaran = Pendaftaran::updateOrCreate(
+
+     $pembangunan = Pembangunan::updateOrCreate(
       [
         'mahasiswa_id' => $request->get('mahasiswa_id'),
       ], 
@@ -70,15 +64,13 @@ class PendaftaranController extends Controller
         'ket_bayar' => $request->get('ket_bayar'),
       ]);
 
-     $detail = new Pendaftaran_det();
-     $detail->bayar_pustaka = $request->get('bayar_pustaka');
-     $detail->bayar_alma = $request->get('bayar_alma');
-     $detail->bayar_pendaftaran = $request->get('bayar_pendaftaran');
+     $detail = new Pembangunan_det();
+     $detail->jumlah_bayar = $request->get('jumlah_bayar');
      $detail->tanggal_bayar = $request->get('tanggal_bayar');
      $detail->transaksi_id = $transaksi->getKey();
-     $detail->pendaftaran_id = $pendaftaran->id;
+     $detail->pembangunan_id = $pembangunan->id;
      $detail->save();
-     LogHelper::addToLog("Menambah Transaksi Pendaftaran dengan pendaftaran_id : $pendaftaran->getKey() dan pendaftaran_det_id = $detail->getKey() ");
+     LogHelper::addToLog("Menambah Transaksi Pembangunan dengan pembangunan_id : $pembangunan->getKey() dan pembangunan_det_id = $detail->getKey() ");
      return response()->json(['success' => true]);
 
    }
@@ -91,8 +83,8 @@ class PendaftaranController extends Controller
      */
     public function show($id)
     {
-      $pendaftaran = Pendaftaran::find($id);
-      return view('pemasukan.pendaftaran.detail', compact('pendaftaran'));
+      $pembangunan = Pembangunan::find($id);
+      return view('pemasukan.pembangunan.detail', compact('pembangunan'));
     }
 
     /**
@@ -104,8 +96,8 @@ class PendaftaranController extends Controller
     public function edit($id)
     {
 
-      $detail = Pendaftaran_det::with('pendaftaran.pendaftaran_det')->findOrFail($id); 
-      return view('pemasukan.pendaftaran.edit', compact('detail'));
+      $detail = Pembangunan_det::with('pembangunan.pembangunan_det')->findOrFail($id); 
+      return view('pemasukan.pembangunan.edit', compact('detail'));
     }
 
     /**
@@ -118,23 +110,19 @@ class PendaftaranController extends Controller
     public function update(Request $request, $id)
     {
      $this->validate($request, [
-      'bayar_pustaka' => 'required|numeric',
-      'bayar_alma' => 'required|numeric',
-      'bayar_pendaftaran' => 'required|numeric',
+      'jumlah_bayar' => 'required|numeric',
       'tanggal_bayar' => 'required',
       'ket_bayar' => 'required',
     ]);
-     $detail = Pendaftaran_det::findOrFail($id);
-     $detail->bayar_pustaka = $request->get('bayar_pustaka');
-     $detail->bayar_alma = $request->get('bayar_alma');
-     $detail->bayar_pendaftaran = $request->get('bayar_pendaftaran');
+     $detail = Pembangunan_det::findOrFail($id);
+     $detail->jumlah_bayar = $request->get('jumlah_bayar');
      $detail->tanggal_bayar = $request->get('tanggal_bayar');
      $detail->save();
-     $detail->pendaftaran->ket_bayar = $request->get('ket_bayar');
-     $detail->pendaftaran->save();
-     LogHelper::addToLog('Merubah Data Detail Pendaftaran dengan pendaftaran_det_id : '. $detail->getKey());
+     $detail->pembangunan->ket_bayar = $request->get('ket_bayar');
+     $detail->pembangunan->save();
+     LogHelper::addToLog('Merubah Data Detail pembangunan dengan pembangunan_det_id : '. $detail->getKey());
 
-     return redirect(route('pendaftaran.index'));
+     return redirect(route('pembangunan.index'));
    }
 
     /**
@@ -147,44 +135,44 @@ class PendaftaranController extends Controller
     {
 
 
-      $mahasiswa = Mahasiswa::with('pendaftaran.pendaftaran_det')->whereHas('pendaftaran.pendaftaran_det', function($i) use($id) {
+      $mahasiswa = Mahasiswa::with('pembangunan.pembangunan_det')->whereHas('pembangunan.pembangunan_det', function($i) use($id) {
         $i->where('id', $id );
       })->get()->first();
 
       
 
-      $detail = $mahasiswa->pendaftaran->pendaftaran_det->where('id',$id)->first();
+      $detail = $mahasiswa->pembangunan->pembangunan_det->where('id',$id)->first();
       $delTransaksi = $detail->transaksi->delete();
       $delDetail = $detail->delete();
 
       $newMahasiswa = Mahasiswa::findOrFail($mahasiswa->id);
 
-      if (empty($newMahasiswa->pendaftaran->pendaftaran_det->toArray())) {
-        $newMahasiswa->pendaftaran->delete();
+      if (empty($newMahasiswa->pembangunan->pembangunan_det->toArray())) {
+        $newMahasiswa->pembangunan->delete();
       }
 
-      LogHelper::addToLog('Menghapus Data Pendaftaran Detail dengan pendaftaran_det_id : '. $detail->getKey());
+      LogHelper::addToLog('Menghapus Data Pembangunan Detail dengan pembangunan_det_id : '. $detail->getKey());
 
       if ($request->wantsJson()) {
         return response()->json(['success'=> true, 'mahasiswa' => $mahasiswa]);
         
       }
-      return redirect(route("pendaftaran.index"));
+      return redirect(route("pembangunan.index"));
 
     }
 
     public function cetakKwitansi($id)
     {
-      $transaksi = Pendaftaran_det::with('pendaftaran.mahasiswa')->findOrFail($id);
+      $transaksi = Pembangunan_det::with('pembangunan.mahasiswa')->findOrFail($id);
 
       $kwitansi = new \stdClass();
       $kwitansi->id_transaksi = $transaksi->transaksi_id;
       $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
-      $kwitansi->nama = $transaksi->pendaftaran->mahasiswa->nama_mhs;
+      $kwitansi->nama = $transaksi->pembangunan->mahasiswa->nama_mhs;
       $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
-      $kwitansi->jumlah_bayar = $transaksi->bayar_alma + $transaksi->bayar_pustaka + $transaksi->bayar_pendaftaran;
+      $kwitansi->jumlah_bayar  = $transaksi->jumlah_bayar;
       $kwitansi->nama_penerima = \Auth::user()->name;
-      $kwitansi->nama_pembayar = $transaksi->pendaftaran->mahasiswa->nama_mhs;
+      $kwitansi->nama_pembayar = $transaksi->pembangunan->mahasiswa->nama_mhs;
 
 
       return view ('kwitansi.template', compact('kwitansi'));

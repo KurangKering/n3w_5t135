@@ -21,6 +21,7 @@
 		overflow: hidden;
 		height: 82px;
 		margin: 0 10px;
+		border-bottom: 1px solid;
 	}
 	
 	.first {
@@ -58,30 +59,20 @@
 	}
 
 	section {
-		border-bottom: 1px outline;
+		border-bottom: 1px dotted;
 		margin: 0 10px;
 	}
 	section table {
-	width: 100%;
+
 	}
 	section th {
-		width: 20%;
 		padding: 5px 20px;
 	}
 
 	section th, section td {
 		text-align: left;
 	}
-	section td {
-		
-	}
-	section td:nth-child(2) {
-		width: 1%;
-	}
-	section td:nth-child(3) {
-		border-bottom: 1px dotted;
-		: 0;
-	}
+
 	footer {
 		margin: 0 10px;
 		min-height: 100px;
@@ -99,10 +90,15 @@
 		height: 80px;
 		border: 1px solid;
 		border-radius: 28px;
+		position: relative;
 
 	}
 	.rectangle p {
-		margin-top: 40px;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		right: 0;
+		margin-top: -1px;
 	}	
 	footer .ttd {
 		margin: 0 2.5%;
@@ -121,8 +117,6 @@
 		width: 50%;
 	}
 	.ttd table th, .ttd table td {
-		text-align: center;
-
 		vertical-align: top;
 
 	}
@@ -135,7 +129,7 @@
 		
 		<header>
 			<div class="first">
-				<img src="{{ asset('images/logo.png') }}" alt="">
+				<img src="../../../public/images/logo.png" alt="">
 				
 			</div>
 			<div class="second">
@@ -147,12 +141,12 @@
 					<tr>
 						<th>No</th>
 						<td>:</td>
-						<td>{{ $kwitansi->id_transaksi }}</td>
+						<td></td>
 					</tr>
 					<tr>
 						<th>Tanggal</th>
 						<td>:</td>
-						<td>{{ indonesian_date($kwitansi->tanggal_bayar, 'j F Y')}}</td>
+						<td></td>
 					</tr>
 				</table>
 			</div>
@@ -165,35 +159,35 @@
 				<tr>
 					<th>Terima Dari</th>
 					<td>:</td>
-					<td>{{ $kwitansi->nama }}</td>
+					<td>Ilham Rahmadhani</td>
 				</tr>
 				<tr>
 					<th>Untuk</th>
 					<td>:</td>
-					<td>{{ $kwitansi->jenis_transaksi }}</td>
+					<td> Pendaftaran</td>
 				</tr>
 				<tr>
 					<th>Terbilang</th>
 					<td>:</td>
-					<td>{{ terbilang($kwitansi->jumlah_bayar) }}</td>
+					<td>Tiga Ratus Ribu Rupiah</td>
 				</tr>
 			</table>
 		</section>
 		<footer>
 			<div class="numeric">
 				<div class="rectangle">
-					<p>{{ rupiah($kwitansi->jumlah_bayar) }}</p>
+					<p>Rp. 500.000,00</p>
 				</div>
 			</div>
 			<div class="ttd">
 				<table>
 					<tr>
-						<th>Diterima</th>
-						<th>Dibayar</th>
+						<th>Bendahara</th>
+						<th>Abdul Somad</th>
 					</tr>
 					<tr>
-						<td>{{ ucwords($kwitansi->nama_penerima) }}</td>
-						<td>{{ ucwords($kwitansi->nama_pembayar) }}</td>
+						<td>Mahasiswa</td>
+						<td>Bakti Nusa Bangsa Dan Mrtabanat nay</td>
 					</tr>
 				</table>
 			</div>
@@ -201,8 +195,6 @@
 		</footer>
 
 	</div>
-	<script>
-		window.print();
-	</script>
 </body>
+
 </html>

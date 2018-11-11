@@ -28,7 +28,8 @@ return [
 	'pemasukan' => [
 		'Pemasukan Lain',
 		'Pembayaran Semester',
-		'Pendaftaran'
+		'Pendaftaran',
+		'Pembangunan'
 	],
 	'pengeluaran' => [
 		'Pembayaran Gaji',

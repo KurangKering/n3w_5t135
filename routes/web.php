@@ -100,6 +100,11 @@ Route::group(['middleware' => ['role:Member']], function() {
 	 * Route untuk kwitansi seluruh transaksi
 	 * 
 	 */
+	
+	Route::get('pemasukan/pembangunan/{id}/kwitansi', 
+		'pemasukan\PembangunanController@cetakKwitansi')
+	->name('kwitansi.pembangunan');
+
 	Route::get('pemasukan/pendaftaran/{id}/kwitansi', 
 		'pemasukan\PendaftaranController@cetakKwitansi')
 	->name('kwitansi.pendaftaran');
@@ -133,6 +138,7 @@ Route::group(['middleware' => ['role:Member']], function() {
 		'pegawai'                       => 'PegawaiController',
 		'pemasukan/pendaftaran'         => 'Pemasukan\PendaftaranController',
 		'pemasukan/pembayaran_semester' => 'Pemasukan\PembayaranSemesterController',
+		'pemasukan/pembangunan'      => 'Pemasukan\PembangunanController',
 		'pemasukan/pemasukan_lain'      => 'Pemasukan\PemasukanLainController',
 		'pengeluaran/pembayaran_gaji'   => 'Pengeluaran\PembayaranGajiController',
 		'pengeluaran/pengeluaran_lain'  => 'Pengeluaran\PengeluaranLainController',

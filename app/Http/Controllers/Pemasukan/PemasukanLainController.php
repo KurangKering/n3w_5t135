@@ -189,9 +189,10 @@ class PemasukanLainController extends Controller
       $kwitansi->nama_penerima = \Auth::user()->name;
       $kwitansi->nama_pembayar = '';
 
-      $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
+      return view('kwitansi.template', compact('kwitansi'));
+      // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
 
-      return $pdf->stream($transaksi->id .'-pemasukan_lain.pdf');
+      // return $pdf->stream($transaksi->id .'-pemasukan_lain.pdf');
 
   }
 

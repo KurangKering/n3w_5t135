@@ -56,6 +56,7 @@
             <a href="#"> <span class="nav-label">Pemasukan</span> <span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
                 <li class="{{ active_sidebar('*pendaftaran*') }}"><a href="{{ route('pendaftaran.index') }}">Pendaftaran</a></li>
+                <li class="{{ active_sidebar('*pembangunan*') }}"><a href="{{ route('pembangunan.index') }}">Pembangunan</a></li>
                 <li class="{{ active_sidebar('*pembayaran_semester*') }}"><a href="{{ route('pembayaran_semester.index') }}">Pembayaran Semester</a></li>
                 <li class="{{ active_sidebar('*pemasukan_lain*') }}"><a href="{{ route('pemasukan_lain.index') }}">Pemasukan Lain</a></li>
             </ul>

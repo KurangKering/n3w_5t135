@@ -27,8 +27,6 @@
     <!-- Gritter -->
     <link href="{{ asset('templates/inspinia_271/js/plugins/gritter/jquery.gritter.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/DataTables/datatables.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('plugins/DataTables/DataTables-1.10.18/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
-    {{-- <link href="{{ asset('templates/inspinia_271/css/plugins/dataTables/dataTables.min.css') }}" rel="stylesheet"> --}}
 
     <link href="{{ asset('plugins/jasny-bootstrap/jasny-bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('plugins/iziModal/css/iziModal.min.css') }}" rel="stylesheet" />
@@ -98,14 +96,11 @@
 <script src="{{ asset('templates/inspinia_271/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('templates/inspinia_271/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
 <script src="{{ asset('templates/inspinia_271/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
-{{-- <script src="{{ asset('templates/inspinia_271/js/plugins/dataTables/dataTables.min.js') }}"></script> --}}
-<script type="text/javascript" src="{{ asset('plugins/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('plugins/DataTables/JSZip-2.5.0/jszip.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('plugins/DataTables/pdfmake-0.1.36/pdfmake.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('plugins/DataTables/pdfmake-0.1.36/vfs_fonts.js') }}"></script>
-<script type="text/javascript" src="{{ asset('plugins/DataTables/Buttons-1.5.4/js/buttons.html5.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('plugins/DataTables/Buttons-1.5.4/js/buttons.colVis.min.js') }}"></script>
+
+
+
+{{--  --}}
 <!-- Custom and plugin javascript -->
 <script src="{{ asset('templates/inspinia_271/js/inspinia.js') }}"></script>
 <script src="{{ asset('templates/inspinia_271/js/plugins/pace/pace.min.js') }}"></script>

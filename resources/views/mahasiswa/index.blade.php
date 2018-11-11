@@ -1,4 +1,4 @@
-@extends('layouts.new_template')
+	@extends('layouts.new_template')
 @section('custom_css')
 @parent
 @endsection

@@ -175,9 +175,10 @@ class PembayaranGajiController extends Controller
         $kwitansi->nama_penerima = \Auth::user()->name;
         $kwitansi->nama_pembayar = $transaksi->pegawai->nama_pegawai;
 
-        $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
+        return view('kwitansi.template', compact('kwitansi'));
+        // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
 
-        return $pdf->stream($transaksi->id .'-pembayaran_semester.pdf');
+        // return $pdf->stream($transaksi->id .'-pembayaran_semester.pdf');
 
     }
 }
