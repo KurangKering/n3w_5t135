@@ -1,4 +1,7 @@
 @extends('layouts.new_template')
+@section('custom_css')
+
+@endsection
 @section('page-heading')
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-lg-10">
@@ -19,50 +22,56 @@
         </div>
       </div>
       <div class="ibox-content">
+        <div class="table-responsive">
+          <table id="table-pemasukan-lain" class="table table-striped table-bordered table-hover" >
+            <thead>
+              <tr>
+               <th>Kode Transaksi</th>
+               <th>Jenis</th>
+               <th>Uraian</th>
+               <th>Tanggal</th>
+               <th>Jumlah Bayar</th>
+               <th>Saldo Awal</th>
+               <th>Saldo Akhir</th>
+               <th>Keterangan</th>
+               <th>Lampiran</th>
+               <th class="text-center">Aksi</th>
+             </tr>
+           </thead>
+           <tbody>
+             @foreach ($pemasukan_lains as $index => $pemasukan_lain)
+             <tr class="odd gradeX">
+              <td>{{ $pemasukan_lain->transaksi_id }}</td>
+              <td>{{ $pemasukan_lain->jenis_bayar }}</td>
+              <td>{{ $pemasukan_lain->uraian }}</td>
+              <td>{{ indonesian_date($pemasukan_lain->tanggal_bayar, 'j F Y') }}</td>
+              <td>{{ rupiah($pemasukan_lain->total_bayar) }}</td>
+              <td>{{ rupiah($pemasukan_lain->saldo_awal) }}</td>
+              <td>{{ rupiah($pemasukan_lain->saldo_akhir) }}</td>
+              <td>{!! $pemasukan_lain->keterangan !!}</td>
+              <td>
+                @if ($pemasukan_lain->lampiran)
+                <a target="_blank" href="{{ route('lampiran.pemasukan_lain', $pemasukan_lain->id) }}">Lihat</a>
+                @endif
+              </td>
 
-        <table id="table-pemasukan-lain" class="table table-striped table-bordered table-hover" >
-          <thead>
-            <tr>
-             <th>Kode Transaksi</th>
-             <th>Jenis</th>
-             <th>Uraian</th>
-             <th>Tanggal</th>
-             <th>Jumlah Bayar</th>
-             <th>Keterangan</th>
-             <th>Lampiran</th>
-             <th class="text-center">Aksi</th>
-           </tr>
-         </thead>
-         <tbody>
-           @foreach ($pemasukan_lains as $index => $pemasukan_lain)
-           <tr class="odd gradeX">
-            <td>{{ $pemasukan_lain->transaksi_id }}</td>
-            <td>{{ $pemasukan_lain->jenis_bayar }}</td>
-            <td>{{ $pemasukan_lain->uraian }}</td>
-            <td>{{ indonesian_date($pemasukan_lain->tanggal_bayar, 'j F Y') }}</td>
-            <td>{{ rupiah($pemasukan_lain->total_bayar) }}</td>
-            <td>{!! $pemasukan_lain->keterangan !!}</td>
-            <td>
-              @if ($pemasukan_lain->lampiran)
-              <a target="_blank" href="{{ route('lampiran.pemasukan_lain', $pemasukan_lain->id) }}">Lihat</a>
-              @endif
-            </td>
+              <td width="1%" style="white-space: nowrap">
+                <a target="_blank" href="{{ route('kwitansi.pemasukan_lain', $pemasukan_lain->id) }}" class="btn btn-info">
+                  Print
+                </a>
+                <a href="{{ route('pemasukan_lain.edit', $pemasukan_lain->id) }}" class="btn btn-primary">
+                  Edit
+                </a>
+                <a id="{{ $pemasukan_lain->id }}" class="btn-delete btn btn-warning">
+                  Delete
+                </a>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
 
-            <td width="1%" style="white-space: nowrap">
-              <a target="_blank" href="{{ route('kwitansi.pemasukan_lain', $pemasukan_lain->id) }}" class="btn btn-info">
-                Print
-              </a>
-              <a href="{{ route('pemasukan_lain.edit', $pemasukan_lain->id) }}" class="btn btn-primary">
-                Edit
-              </a>
-              <a id="{{ $pemasukan_lain->id }}" class="btn-delete btn btn-warning">
-                Delete
-              </a>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
 
     </div>
   </div>
@@ -75,7 +84,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('#table-pemasukan-lain').DataTable({
-
+      order: [0, "desc"],
       dom:  '<"html5buttons"B>lfrtip',
       buttons: [
 

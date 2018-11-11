@@ -19,7 +19,17 @@ class PemasukanLainController extends Controller
      */
     public function index()
     {
-        $pemasukan_lains = Pemasukan_lain::paginate(10);
+        $pemasukan_lains = Pemasukan_lain::orderBy('id', 'asc')->get();
+        $cum_sum = 0;
+        $pemasukan_lains->each(function($i) use(&$cum_sum) {
+            $i->saldo_awal = $cum_sum;
+            $cum_sum += $i->total_bayar;
+            $i->saldo_akhir = $cum_sum;
+
+        });
+
+        $pemasukan_lains->sortByDesc('id');
+
         return view('pemasukan.pemasukan_lain.index', compact('pemasukan_lains'));
     }
 
