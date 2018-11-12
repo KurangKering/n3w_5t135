@@ -40,7 +40,7 @@
            </thead>
            <tbody>
              @foreach ($pemasukan_lains as $index => $pemasukan_lain)
-             <tr class="odd gradeX">
+             <tr class="odd gradeX" data-total-bayar="{{ $pemasukan_lain->total_bayar }}">
               <td>{{ $pemasukan_lain->transaksi_id }}</td>
               <td>{{ $pemasukan_lain->jenis_bayar }}</td>
               <td>{{ $pemasukan_lain->uraian }}</td>
@@ -134,7 +134,8 @@
         columns: [ 0, 1,2,3,4,5 ]
       }
     },
-    ]
+    ],
+ 
   });
 
     $('.btn-delete').click(function() {
