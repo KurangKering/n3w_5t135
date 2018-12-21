@@ -102,6 +102,14 @@
 						<label class="control-label col-lg-2">Email</label>
 						<div class="col-lg-10"><input class="form-control" value="{{ $pegawai->email }}" name="email"></div>
 					</div>
+					<div class="form-group">
+						<label class="control-label col-lg-2">Status</label>
+						<div class="col-lg-10">
+							{{ Form::select('status', Config::get('enums.status_pegawai'), $pegawai->status, ['class' => 'form-control']) }}
+
+
+						</div>
+					</div>
 					<div class="text-center">
 						<button type="submit" class="btn btn-primary btn-lg">Ubah</button>
 					</div>
@@ -110,9 +118,10 @@
 		</div>
 	</div>
 </div>
+
 @endsection
 @section('custom_js')
 <script>
-	
+
 </script>
 @endsection

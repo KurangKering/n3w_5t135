@@ -60,8 +60,8 @@
                     </li>
 
 
-                    <li>
-                        <a onclick="event.preventDefault();
+                    <li class="">
+                        <a class="" onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">
                         <i class="fa fa-sign-out"></i> Log out
                     </a>
@@ -113,6 +113,7 @@
 
 <!-- jQuery UI -->
 <script src="{{ asset('templates/inspinia_271/js/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('js/convert_rupiah.js') }}"></script>
 <script>
 
 </script>

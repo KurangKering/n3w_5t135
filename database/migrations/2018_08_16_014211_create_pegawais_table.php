@@ -24,6 +24,7 @@ class CreatePegawaisTable extends Migration
             $table->string('agama')->nullable();
             $table->char('no_hp')->nullable();
             $table->string('email')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -49,6 +49,7 @@
         @elseif (Auth::user()->hasRole('Member'))
 
         <li class="{{ active_sidebar('mahasiswa') }}" ><a href="{{ route('mahasiswa.index') }}"> <span class="nav-label">Data Mahasiswa</span></a>
+        <li class="{{ active_sidebar('calon_mahasiswa') }}" ><a href="{{ route('mahasiswa.index') }}"> <span class="nav-label">Data Calon Mahasiswa</span></a>
         </li>
         <li class="{{ active_sidebar('pegawai') }}"><a href="{{ route('pegawai.index')  }}"> <span class="nav-label">Data Pegawai</span></a>
         </li>

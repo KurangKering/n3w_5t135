@@ -86,7 +86,7 @@
 							<th  class="text-center" style="vertical-align: middle">Jumlah Bayar</th>
 							<th  class="text-center" style="vertical-align: middle">Action</th>
 						</tr>
-					
+
 					</thead>
 					<tbody id="content-pembangunan">
 					</tbody> 
@@ -103,6 +103,13 @@
 					<div class="ibox-content">
 						@csrf
 						<input type="hidden" name="mahasiswa_id" value="">
+						{{ Form::hidden('sisa', null) }}
+						<div class="form-group">
+							<label class="control-label col-lg-2">Sisa Biaya</label>
+							<div class="col-lg-10">
+								<input class="form-control" readonly type="text" name="sisa_biaya">
+							</div>
+						</div>
 						<div class="form-group">
 							<label class="control-label col-lg-2">Jumlah Bayar</label>
 							<div class="col-lg-10">
@@ -116,14 +123,14 @@
 							<div class="col-lg-6">
 								<input class="form-control" type="date"  value="{{ date('Y-m-d') }}" name="tanggal_bayar" id="example-date-input">
 							</div>
-							<label class="control-label col-lg-2">Status</label>
+							{{-- <label class="control-label col-lg-2">Status</label>
 							<div class="col-lg-2">
 								<select class="form-control" name="ket_bayar">
 									@foreach (\Config::get('enums.status_bayar') as $k => $v)
 									<option value="{{ $v }}">{{ $v }}</option>
 									@endforeach
 								</select>
-							</div>
+							</div> --}}
 
 						</div>
 
@@ -167,6 +174,7 @@
 	//
 	let container = {};
 
+	let biayaPembangunan = {{ Config::get('enums.biaya_pembangunan') }};
 	let $content = $("#content-pembangunan");
 	let $lookup = $("#lookup");
 	let $btnSimpan = $("#btn-simpan");
@@ -174,6 +182,7 @@
 	let $formPembangunan = $("#form-pembangunan");
 	let $errorArea = $("#error-area");
 	//inputan 
+	let inputSisa = $("input[name=sisa]");
 	let inputID = $("input[name='mahasiswa_id']");
 	let inputJumlahBayar = $("input[name='jumlah_bayar']");
 	let inputTglBayar = $("input[name='tanggal_bayar']");
@@ -213,7 +222,7 @@
 			buttons : false,
 			closeOnClickOutside: false,
 		});
-		axios.get("{{ route('mahasiswa.index') . '/' }}" + id)
+		axios.get("{{ url('mahasiswa/show_pembangunan') . '/' }}" + id)
 		.then(response => {
 			res = response.data;
 			populateTable(res);
@@ -227,8 +236,13 @@
 
 	function populateTable(datas)
 	{
+		let sisaBiaya = biayaPembangunan;
+
+
 		$content.html("");
 		if (datas.pembangunan) {
+			sisaBiaya = sisaBiaya - datas.pembangunan.total_angka;
+
 			$.each(datas.pembangunan.pembangunan_det, function(index, pemb) {
 				let tr = $("<tr/>", {
 
@@ -352,6 +366,13 @@
 					colspan	: '7'
 				})));
 		}
+
+		$('input[name="sisa"]').val(sisaBiaya);
+		$('input[name="sisa_biaya"]').val(convertToRupiah(sisaBiaya));
+
+
+		
+
 	}
 
 
@@ -393,8 +414,6 @@
 	});
 	
 	$btnSimpan.click(function(e) {
-		$(this).attr('disabled', true);
-		$errorArea.html("");
 		let id = inputID.val();
 		if (!id) {
 			swal({
@@ -406,41 +425,58 @@
 				closeOnClickOutside: false
 
 			})
-			$(this).attr('disabled', false);
 
 			return;
 
 		}
 		
+		
+
+		$errorArea.html("");
+		
+		$(this).attr('disabled', true);
 		let formData = $formPembangunan.serialize();
 		axios.post('{{ route('pembangunan.store') }}', formData )
 		.then(response => {
-			swal({
-				icon : 'success',
-				title : "Sukses",
-				text : "Transaksi berhasil",
-				buttons : {
-					lagi : {
-						text : 'Tetap Disini',
-						className : 'btn btn-primary'
+			res = response.data;
+			if (res.success) {
+				swal({
+					icon : 'success',
+					title : "Sukses",
+					text : "Transaksi berhasil",
+					buttons : {
+						lagi : {
+							text : 'Tetap Disini',
+							className : 'btn btn-primary'
+						},
+						kembali : {
+							className : 'btn btn-info'
+						}
 					},
-					kembali : {
-						className : 'btn btn-info'
+					closeOnClickOutside: false,
+				})
+				.then(clicked => {
+					if (clicked == 'lagi') {
+						var nim = $("#nim").val();
+						render(id);
+					} else if (clicked == 'kembali')
+					{
+						location.href= '{{ route('pembangunan.index') }}';
+
 					}
-				},
-				closeOnClickOutside: false,
-			})
-			.then(clicked => {
-				if (clicked == 'lagi') {
-					var nim = $("#nim").val();
-					render(id);
-				} else if (clicked == 'kembali')
-				{
-					location.href= '{{ route('pembangunan.index') }}';
 
-				}
+				})
+			} else {
+				swal({
+					icon : 'warning',
+					title : 'Gagal',
+					text : res.msg,
+					timer : 1000,
+					buttons : false,
+					closeOnClickOutside: false
 
-			})
+				});
+			}
 			$(this).attr('disabled', false);
 
 		})

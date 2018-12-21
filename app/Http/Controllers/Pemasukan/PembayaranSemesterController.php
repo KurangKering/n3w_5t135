@@ -47,32 +47,74 @@ class PembayaranSemesterController extends Controller
       'semester' => "required",
       'jumlah_bayar' => 'required|numeric',
       'tanggal_bayar' => 'required',
-      'status' => 'required',
       'mahasiswa_id' => 'required',
     ]);
-     $transaksi = new Transaksi();
-     $transaksi->jenis_transaksi = "Pembayaran Semester";
-     $transaksi->save();
 
-     $pembayaran = Pembayaran_semester::updateOrCreate(
+     $biayaSemester = \Config::get('enums.biaya_semester');
+     $total = 0;
+     $jumlah_bayar = $request->get('jumlah_bayar');
+     
+     $pembayaran = Pembayaran_semester::where([
+      'semester' => $request->get('semester'),
+      'mahasiswa_id' => $request->get('mahasiswa_id'),
+    ])->first();
+
+     $sisaBayar = $biayaSemester;
+     if ($pembayaran) {
+      $sisaBayar = $biayaSemester - $pembayaran->pembayaran_semester_det->sum('jumlah_bayar') ;
+
+      if ($pembayaran->ket_bayar == 'Lunas') {
+        return response()->json(['success' => false, 'msg' => 'Data Sudah Lunas']);
+        
+      }
+    }
+
+    if ($jumlah_bayar == '0') {
+      return response()->json(['success' => false, 'msg' => 'Periksa Jumlah Bayar']);
+      
+    }
+
+    if ($jumlah_bayar > $sisaBayar) {
+      return response()->json(['success' => false, 'msg' => 'Jumlah Bayar Lebih Besar Dari Sisa Bayar']);
+    }
+
+
+
+    $transaksi = new Transaksi();
+    $transaksi->jenis_transaksi = "Pembayaran Semester";
+    $transaksi->save();
+
+    $pembayaran = Pembayaran_semester::firstOrCreate(
       [
         'mahasiswa_id' => $request->get('mahasiswa_id'),
         'semester' => $request->get('semester'),
-      ], 
-      [
-        'ket_bayar' => $request->get('status'),
-      ]);
+      ]
+    );
 
-     $detail = new Pembayaran_semester_det();
-     $detail->jumlah_bayar = $request->get('jumlah_bayar');
-     $detail->tanggal_bayar = $request->get('tanggal_bayar');
-     $detail->transaksi_id = $transaksi->getKey();
-     $detail->pembayaran_semester_id = $pembayaran->getKey();
-     $detail->save();
-     LogHelper::addToLog('Menambah Data Pembayaran Semester dengan id detail : '. $detail->getKey());
-     return response()->json(['success' => true]);
 
-   }
+
+    $detail = new Pembayaran_semester_det();
+    $detail->jumlah_bayar = $request->get('jumlah_bayar');
+    $detail->tanggal_bayar = $request->get('tanggal_bayar');
+    $detail->transaksi_id = $transaksi->getKey();
+    $detail->pembayaran_semester_id = $pembayaran->getKey();
+    $detail->save();
+
+    $pembayaran_semester = $detail->pembayaran_semester;
+    $total = $pembayaran_semester->pembayaran_semester_det->sum('jumlah_bayar');
+
+    $isLunas = $total == $biayaSemester;
+    if ($isLunas) {
+     $pembayaran_semester->ket_bayar = 'Lunas';
+   } else {
+    $pembayaran_semester->ket_bayar = 'Angsur';
+  }
+  $pembayaran_semester->save();
+
+  LogHelper::addToLog('Menambah Data Pembayaran Semester dengan id detail : '. $detail->getKey());
+  return response()->json(['success' => true]);
+
+}
 
     /**
      * Display the specified resource.
@@ -146,7 +188,8 @@ class PembayaranSemesterController extends Controller
 
       $pembayaran = Pembayaran_semester::findOrFail($detail->pembayaran_semester->id);
       
-
+      $pembayaran->ket_bayar = 'Angsur';
+      $pembayaran->save();
       if (empty($pembayaran->pembayaran_semester_det->toArray())) {
         $pembayaran->delete();
       }

@@ -77,6 +77,73 @@ class MahasiswaController extends Controller
     }
 
     /**
+     * Show data single mahasiswa beserta data pembayaran semester,
+     * route('mahasiswa/show_pembayaran_semester/{mahasiswa_id}')
+     * url('mahasiswa/show_pembayaran_semester/{mahasiswa_id}')
+     */
+    public function show_pembayaran_semester(Request $request, $id) 
+    {
+      $biayaSemester  = \Config::get('enums.biaya_semester');
+      $mahasiswa = Mahasiswa::with('pembayaran_semester.pembayaran_semester_det')->find($id);
+      if ($mahasiswa->pembayaran_semester) {
+        $mahasiswa->pembayaran_semester->each(function($iii) use ($biayaSemester) {
+          $iii->total = 0;
+          $iii->pembayaran_semester_det->each(function($iiii) use($iii) {
+            $iiii->tgl_bayar_manusia = indonesian_date($iiii->tanggal_bayar, 'j F Y');
+            $iiii->jumlah_bayar_manusia = rupiah($iiii->jumlah_bayar);
+
+            $iii->total += $iiii->jumlah_bayar;
+          });
+          $iii->total_manusia = rupiah($iii->total);
+          $iii->sisa = $biayaSemester - $iii->total;
+          $iii->sisa_manusia = rupiah($iii->sisa);
+        });
+      }
+
+      if ($request->wantsJson())
+      {
+
+        return $mahasiswa;
+      }
+
+      return $mahasiswa;
+      // return view('mahasiswa.detail', compact('mahasiswa'));
+
+    }
+    /**
+     * Show data single mahasiswa beserta data pembangunan,
+     * route('mahasiswa/show_pembangunan/{mahasiswa_id}')
+     * url('mahasiswa/show_pembangunan/{mahasiswa_id}')
+     */
+    public function show_pembangunan(Request $request, $id) 
+    {
+
+      $mahasiswa = Mahasiswa::find($id);
+      if ($mahasiswa->pembangunan) {
+        $mahasiswa->pembangunan->pembangunan_det->each(function($iii) use($mahasiswa) {
+
+          $iii->tgl_bayar_manusia = indonesian_date($iii->tanggal_bayar);
+          $iii->jumlah_bayar_manusia = rupiah($iii->jumlah_bayar);
+
+          $mahasiswa->pembangunan->total_angka += $iii->jumlah_bayar;
+          $mahasiswa->pembangunan->total += $iii->jumlah_bayar;
+        });
+        $mahasiswa->pembangunan->total = rupiah($mahasiswa->pembangunan->total);  
+
+      }
+
+      if ($request->wantsJson())
+      {
+
+        return $mahasiswa;
+      }
+
+      return $mahasiswa;
+      // return view('mahasiswa.detail', compact('mahasiswa'));
+
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -119,6 +186,7 @@ class MahasiswaController extends Controller
           $iii->tgl_bayar_manusia = indonesian_date($iii->tanggal_bayar);
           $iii->jumlah_bayar_manusia = rupiah($iii->jumlah_bayar);
 
+          $mahasiswa->pembangunan->total_angka += $iii->jumlah_bayar;
           $mahasiswa->pembangunan->total += $iii->jumlah_bayar;
         });
         $mahasiswa->pembangunan->total = rupiah($mahasiswa->pembangunan->total);  

@@ -77,6 +77,18 @@ Route::group(['middleware' => ['role:Ketua']], function() {
 Route::group(['middleware' => ['role:Member']], function() {
 
 	/**
+ 	* Route untuk mahasiswa controller
+ 	*/
+ 	Route::get('mahasiswa/show_pembangunan/{mahasiswa_id}', [
+ 		'as' => 'mahasiswa.show_pembangunan',
+ 		'uses' => 'MahasiswaController@show_pembangunan',
+ 	]);
+ 		Route::get('mahasiswa/show_pembayaran_semester/{mahasiswa_id}', [
+ 		'as' => 'mahasiswa.show_pembayaran_semester',
+ 		'uses' => 'MahasiswaController@show_pembayaran_semester',
+ 	]);
+
+	/**
 	 * Route untuk lampiran seluruh transaksi
 	 */
 	Route::get('pemasukan/pemasukan_lain/{id}/lampiran', 

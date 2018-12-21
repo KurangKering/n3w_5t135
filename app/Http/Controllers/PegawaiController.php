@@ -47,6 +47,7 @@ class PegawaiController extends Controller
             'agama' => 'required',
             'no_hp' => 'required',
             'email' => 'required|email',
+            'status' => 'required',
 
         ]);
         $pegawai                  = new Pegawai();
@@ -59,6 +60,7 @@ class PegawaiController extends Controller
         $pegawai->agama         = $request->get('agama');
         $pegawai->no_hp         = $request->get('no_hp');
         $pegawai->email         = $request->get('email');
+        $pegawai->status        = $request->get('status');
         $pegawai->save();
         LogHelper::addToLog('Menambah Data Pegawai dengan id_pegawai : '. $pegawai->getKey());
 
@@ -79,7 +81,7 @@ class PegawaiController extends Controller
         if ($request->wantsJson()) {
             return $pegawai;
         }
-    	return view('pegawai.detail', compact('pegawai'));
+        return view('pegawai.detail', compact('pegawai'));
     }
 
     /**
@@ -103,7 +105,7 @@ class PegawaiController extends Controller
      */
     public function update(Request $request, $id)
     {
-       $this->validate($request, [
+     $this->validate($request, [
         'nip' => 'required|unique:pegawais,nip,'. $id,
         'nama_pegawai' => 'required',
         'jabatan' => 'required',
@@ -116,21 +118,22 @@ class PegawaiController extends Controller
 
     ]);
 
-       $pegawai                  = Pegawai::find($id);
-       $pegawai->nip           = $request->get('nip');
-       $pegawai->nama_pegawai  = $request->get('nama_pegawai');
-       $pegawai->jabatan       = $request->get('jabatan');
-       $pegawai->tempat_lahir  = $request->get('tempat_lahir');
-       $pegawai->tanggal_lahir = $request->get('tanggal_lahir');
-       $pegawai->jenis_kelamin = $request->get('jenis_kelamin');
-       $pegawai->agama         = $request->get('agama');
-       $pegawai->no_hp         = $request->get('no_hp');
-       $pegawai->email         = $request->get('email');
-       $pegawai->save();
-       LogHelper::addToLog('Merubah Data Pegawai dengan id_pegawai : '. $pegawai->getKey());
+     $pegawai                  = Pegawai::find($id);
+     $pegawai->nip           = $request->get('nip');
+     $pegawai->nama_pegawai  = $request->get('nama_pegawai');
+     $pegawai->jabatan       = $request->get('jabatan');
+     $pegawai->tempat_lahir  = $request->get('tempat_lahir');
+     $pegawai->tanggal_lahir = $request->get('tanggal_lahir');
+     $pegawai->jenis_kelamin = $request->get('jenis_kelamin');
+     $pegawai->agama         = $request->get('agama');
+     $pegawai->no_hp         = $request->get('no_hp');
+     $pegawai->email         = $request->get('email');
+     $pegawai->status         = $request->get('status');
+     $pegawai->save();
+     LogHelper::addToLog('Merubah Data Pegawai dengan id_pegawai : '. $pegawai->getKey());
 
-       return redirect(route('pegawai.index'));
-   }
+     return redirect(route('pegawai.index'));
+ }
 
     /**
      * Remove the specified resource from storage.

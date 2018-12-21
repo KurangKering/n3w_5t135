@@ -89,6 +89,7 @@
 							<th>Jumlah Bayar</th>
 							<th>Tanggal Bayar</th>
 							<th>Total Bayar</th>
+							<th>Sisa Bayar</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -113,6 +114,7 @@
 							<input type="number" name="semester" class="form-control">
 						</div>
 					</div>
+					
 					<div class="form-group">
 						<label for="" class="control-label col-lg-2">Jumlah Bayar</label>
 						<div class="col-lg-10">
@@ -121,17 +123,10 @@
 					</div>
 					<div class="form-group">
 						<label class="control-label col-lg-2">Tanggal Pembayaran</label>
-						<div class="col-lg-6">
+						<div class="col-lg-10">
 							<input class="form-control" type="date"  value="{{ date('Y-m-d') }}" name="tanggal_bayar">
 						</div>
-						<label class="control-label col-lg-2">Status</label>
-						<div class="col-lg-2">
-							<select class="form-control" name="status" id="status">
-								@foreach (\Config::get('enums.status_bayar') as $k => $v)
-								<option value="{{ $v }}">{{ $v }}</option>
-								@endforeach
-							</select>
-						</div>
+						
 
 					</div>
 					
@@ -170,6 +165,8 @@
 @endsection
 @section('custom_js')
 <script type="text/javascript">
+	let biayaSemester = {{ Config::get('enums.biaya_semester') }};
+
 	let $btnSimpan = $("#btn-simpan");
 	let $lookup = $("#lookup");
 	let $formSemester = $("#form-semester");
@@ -234,32 +231,43 @@
 		let formData = $formSemester.serialize();
 		axios.post('{{ route('pembayaran_semester.store') }}', formData )
 		.then(response => {
-			swal({
-				icon : 'success',
-				title : "Sukses",
-				text : "Transaksi berhasil",
-				buttons : {
-					lagi : {
-						text : 'Tetap Disini',
-						className : 'btn btn-primary'
+			res = response.data;
+			if (res.success) {
+				swal({
+					icon : 'success',
+					title : "Sukses",
+					text : "Transaksi berhasil",
+					buttons : {
+						lagi : {
+							text : 'Tetap Disini',
+							className : 'btn btn-primary'
+						},
+						kembali : {
+							className : 'btn btn-info'
+						}
 					},
-					kembali : {
-						className : 'btn btn-info'
+					closeOnClickOutside: false,
+				})
+				.then(clicked => {
+					if (clicked == 'lagi') {
+						var nim = $("#nim").val();
+						render(id);
+					} else if (clicked == 'kembali')
+					{
+						location.href= '{{ route('pembayaran_semester.index') }}';
+
 					}
-				},
-				closeOnClickOutside: false,
-			})
-			.then(clicked => {
-				if (clicked == 'lagi') {
-					var nim = $("#nim").val();
-					render(id);
-				} else if (clicked == 'kembali')
-				{
-					location.href= '{{ route('pembayaran_semester.index') }}';
 
-				}
-
-			})
+				})
+			} else {
+				swal({
+					icon : 'warning',
+					title : "Gagal",
+					text : res.msg,
+					timer : 1000,
+					closeOnClickOutside: false,
+				})
+			}
 			$(this).attr('disabled', false);
 
 		})
@@ -319,7 +327,7 @@
 			buttons : false,
 			closeOnClickOutside: false,
 		});
-		axios.get("{{ route('mahasiswa.index') . '/' }}" + id)
+		axios.get("{{ url('mahasiswa/show_pembayaran_semester') . '/' }}" + id)
 		.then(response => {
 			res = response.data;
 			
@@ -334,6 +342,7 @@
 
 	function populateTable(datas)
 	{
+
 		$content.html("");
 		if (datas.pembayaran_semester.length > 0) {
 			$.each(datas.pembayaran_semester, function(index, semester) {
@@ -366,6 +375,15 @@
 					if (index2 == 0) {
 						tr.append($("<td/>", {
 							text : semester.total_manusia,
+						})
+						.css({
+							'text-align': 'center'
+						})
+						.attr({
+							rowspan: semester.pembayaran_semester_det.length,
+						}));
+						tr.append($("<td/>", {
+							text : semester.sisa_manusia,
 						})
 						.css({
 							'text-align': 'center'

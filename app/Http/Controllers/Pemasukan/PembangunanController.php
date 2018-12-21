@@ -49,31 +49,63 @@ class PembangunanController extends Controller
       'mahasiswa_id' => 'required',
     ]);
 
+     $biayaPembangunan = \Config::get('enums.biaya_pembangunan');
+     $total = 0;
+     $sisaBayar = $biayaPembangunan;
+     $jumlah_bayar = $request->get('jumlah_bayar');
 
-     $transaksi = new Transaksi();
-     $transaksi->jenis_transaksi = "Pembangunan";
-     $transaksi->save();
+     if ($jumlah_bayar == 0) {
+      return response()->json(['success' => false, 'msg' => 'Periksa Jumlah Bayar']);
 
-
-
-     $pembangunan = Pembangunan::updateOrCreate(
+    }
+    $pembangunan = Pembangunan::firstOrCreate(
       [
         'mahasiswa_id' => $request->get('mahasiswa_id'),
-      ], 
-      [
-        'ket_bayar' => $request->get('ket_bayar'),
       ]);
 
-     $detail = new Pembangunan_det();
-     $detail->jumlah_bayar = $request->get('jumlah_bayar');
-     $detail->tanggal_bayar = $request->get('tanggal_bayar');
-     $detail->transaksi_id = $transaksi->getKey();
-     $detail->pembangunan_id = $pembangunan->id;
-     $detail->save();
-     LogHelper::addToLog("Menambah Transaksi Pembangunan dengan pembangunan_id : $pembangunan->getKey() dan pembangunan_det_id = $detail->getKey() ");
-     return response()->json(['success' => true]);
+    $pembangunan = Pembangunan::where(['mahasiswa_id' => $request->get('mahasiswa_id')])->first();
+    if ($pembangunan) {
+      if ($pembangunan->ket_bayar == 'Lunas') {
+        return response()->json(['success' => false, 'msg' => 'Data Sudah Lunas']);
+      }
+      $sisaBayar = $biayaPembangunan - $pembangunan->pembangunan_det->sum('jumlah_bayar');
+    }
 
-   }
+    if ($jumlah_bayar > $sisaBayar) {
+      return response()->json(['success' => false, 'msg' => 'Jumlah bayar lebih besar dari sisa']);
+
+    }
+
+    $transaksi = new Transaksi();
+    $transaksi->jenis_transaksi = "Pembangunan";
+    $transaksi->save();
+
+    $detail = new Pembangunan_det();
+    $detail->jumlah_bayar = $request->get('jumlah_bayar');
+    $detail->tanggal_bayar = $request->get('tanggal_bayar');
+    $detail->transaksi_id = $transaksi->getKey();
+    $detail->pembangunan_id = $pembangunan->id;
+    $detail->save();
+
+
+
+    $pembangunan = $detail->pembangunan;
+    $total = $pembangunan->pembangunan_det->sum('jumlah_bayar');
+    $isLunas = $total == $biayaPembangunan;
+    if ($isLunas) {
+     $pembangunan->ket_bayar = 'Lunas';
+   } else {
+    $pembangunan->ket_bayar = 'Angsur';
+  }
+  $pembangunan->save();
+
+
+
+
+  LogHelper::addToLog("Menambah Transaksi Pembangunan dengan pembangunan_id : $pembangunan->getKey() dan pembangunan_det_id = $detail->getKey() ");
+  return response()->json(['success' => true]);
+
+}
 
     /**
      * Display the specified resource.
@@ -96,8 +128,15 @@ class PembangunanController extends Controller
     public function edit($id)
     {
 
+      $biayaPembangunan = \Config::get('enums.biaya_pembangunan');
+      $total = 0;
       $detail = Pembangunan_det::with('pembangunan.pembangunan_det')->findOrFail($id); 
-      return view('pemasukan.pembangunan.edit', compact('detail'));
+
+      $pembangunan = $detail->pembangunan;
+      $total = $pembangunan->pembangunan_det->where('id', '!=', $detail->id)->sum('jumlah_bayar');
+
+      $sisa_bayar = $biayaPembangunan - $total;
+      return view('pemasukan.pembangunan.edit', compact('detail', 'sisa_bayar'));
     }
 
     /**
@@ -112,18 +151,31 @@ class PembangunanController extends Controller
      $this->validate($request, [
       'jumlah_bayar' => 'required|numeric',
       'tanggal_bayar' => 'required',
-      'ket_bayar' => 'required',
     ]);
+
      $detail = Pembangunan_det::findOrFail($id);
      $detail->jumlah_bayar = $request->get('jumlah_bayar');
      $detail->tanggal_bayar = $request->get('tanggal_bayar');
      $detail->save();
-     $detail->pembangunan->ket_bayar = $request->get('ket_bayar');
-     $detail->pembangunan->save();
-     LogHelper::addToLog('Merubah Data Detail pembangunan dengan pembangunan_det_id : '. $detail->getKey());
 
-     return redirect(route('pembangunan.index'));
-   }
+     $sisa = $request->get('sisa');
+     $biayaPembangunan = \Config::get('enums.biaya_pembangunan');
+     $total = 0;
+
+     $pembangunan = $detail->pembangunan;
+     $total = $pembangunan->pembangunan_det->sum('jumlah_bayar');
+     $isLunas = $total == $biayaPembangunan;
+     if ($isLunas) {
+       $pembangunan->ket_bayar = 'Lunas';
+     } else {
+      $pembangunan->ket_bayar = 'Angsur';
+    }
+    $pembangunan->save();
+
+    LogHelper::addToLog('Merubah Data Detail pembangunan dengan pembangunan_det_id : '. $detail->getKey());
+
+    return redirect(route('pembangunan.index'));
+  }
 
     /**
      * Remove the specified resource from storage.
@@ -146,7 +198,8 @@ class PembangunanController extends Controller
       $delDetail = $detail->delete();
 
       $newMahasiswa = Mahasiswa::findOrFail($mahasiswa->id);
-
+      $newMahasiswa->pembangunan->ket_bayar = 'Angsur';
+      $newMahasiswa->pembangunan->save();
       if (empty($newMahasiswa->pembangunan->pembangunan_det->toArray())) {
         $newMahasiswa->pembangunan->delete();
       }

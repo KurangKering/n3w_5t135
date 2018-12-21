@@ -32,7 +32,7 @@
 		@endif
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h5>Tambah Mahasiswa</h5>
+				<h5>Tambah Pegawai</h5>
 				<div class="ibox-tools">
 					
 				</div>
@@ -99,6 +99,13 @@
 					<div class="form-group">
 						<label class="control-label col-lg-2">Email</label>
 						<div class="col-lg-10"><input class="form-control" value="{{ old("email") }}" name="email"></div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-lg-2">Status</label>
+						<div class="col-lg-10">
+							{{ Form::select('status', Config::get('enums.status_pegawai'), null, ['class' => 'form-control']) }}
+
+
 					</div>
 					<div class="text-center">
 						<button type="submit" class="btn btn-primary btn-lg">Tambah</button>

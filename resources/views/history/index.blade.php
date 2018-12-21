@@ -49,7 +49,7 @@
 @section('custom_js')
 <script type="text/javascript">
 	$('#table-history').DataTable({
-		"order": [[ 0, "desc" ]],
+		"order": [],
 		
 	});
 </script>

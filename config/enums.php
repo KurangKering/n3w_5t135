@@ -46,5 +46,12 @@ return [
 		'8',
 		'9',
 		'10',
-	]
+	],
+	'status_pegawai' => [
+		'1' => 'aktif',
+		'-1' => 'tidak aktif',
+	],
+
+	'biaya_pembangunan' => 500000,
+	'biaya_semester' => 500000,
 ];

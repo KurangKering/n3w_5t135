@@ -90,6 +90,7 @@
 					{{ method_field('PATCH') }}
 					<div class="ibox-content">
 						@csrf
+						{{ Form::hidden('sisa', $sisa_bayar) }}
 						<input type="hidden" name="mahasiswa_id" value="">
 						<div class="form-group">
 							<label class="control-label col-lg-2">Transaksi ID</label>
@@ -98,31 +99,25 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="control-label col-lg-2">Sisa Biaya</label>
+							<div class="col-lg-10">
+								<input class="form-control" readonly name="" value="{{ rupiah($sisa_bayar) }}">
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="control-label col-lg-2">Jumlah Bayar</label>
 							<div class="col-lg-10">
-								<input class="form-control" name="jumlah_bayar" value="{{ $detail->jumlah_bayar }}">
+								<input class="form-control" type="number" name="jumlah_bayar" value="{{ $detail->jumlah_bayar }}">
 							</div>
 						</div>
 						
 
 						<div class="form-group">
 							<label class="control-label col-lg-2">Tanggal Pembayaran</label>
-							<div class="col-lg-6">
+							<div class="col-lg-10">
 								<input class="form-control" type="date"  value="{{ $detail->tanggal_bayar }}" name="tanggal_bayar" id="example-date-input">
 							</div>
-							<label class="control-label col-lg-2">Status</label>
-							<div class="col-lg-2">
-								<select class="form-control" name="ket_bayar">
-									@foreach (Config::get('enums.status_bayar') as $index => $status)
-									<option value="{{ $status }}"
-
-									@if ($status == $detail->pembangunan->ket_bayar)
-									selected="selected" 
-									@endif
-									>{{ $status }}</option>
-									@endforeach
-								</select>
-							</div>
+							
 
 						</div>
 
@@ -180,6 +175,10 @@
 @endsection
 @section('custom_js')
 <script type="text/javascript">
+	let $inputSisa = $("input[name=sisa]");
+	let $inputJumlah = $("input[name=jumlah_bayar]");
+	let biayaPembangunan = {{ Config::get('enums.biaya_pembangunan') }};
+
 	$(document).ready(function() {
 		$("#lookup").dataTable();
 
@@ -203,6 +202,26 @@
 		$('#angkatan').val(tahun_angkatan);
 		$('#myModal').modal('hide');
 	});
+
+	$('form').submit(function(e) {
+		
+		let valJumlah = parseInt($inputJumlah.val());
+		let valSisa = parseInt($inputSisa.val());
+		if (valJumlah > valSisa) {
+			swal({
+				icon : 'warning',
+				title : 'Gagal',
+				text : 'Jumlah Lebih Besar Dari Sisa',
+				timer : 1000,
+				buttons : false,
+				closeOnClickOutside: false
+
+			});
+			return false;
+		} 
+
+
+	})
 
 </script>
 @endsection

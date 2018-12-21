@@ -28,6 +28,7 @@
 							<th>Jabatan</th>
 							<th>Jenis Kelamin</th>
 							<th>No Telp</th>
+							<th>Status</th>
 							<th>Aksi</th>
 						</tr>
 					</thead>
@@ -40,6 +41,7 @@
 							<td>{{ $pegawai->jabatan }}</td>
 							<td>{{ $pegawai->jenis_kelamin }}</td>
 							<td>{{ $pegawai->no_hp }}</td>
+							<td>{{ Config::get('enums.status_pegawai')[$pegawai->status] }}</td>
 							<td class="text-center" width="1%" style="white-space: nowrap">
 								<a onclick="show_modal('{{ $pegawai->id }}')" class="btn btn-info">Detail</a>
 
