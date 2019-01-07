@@ -11,12 +11,18 @@ class Mahasiswa extends Model
 	{
 		return $this->hasMany('App\Pembayaran_semester', 'mahasiswa_id');
 	}
-	public function pendaftaran()
-	{
-		return $this->hasOne('App\Pendaftaran');
-	}
+	
 	public function pembangunan()
 	{
 		return $this->hasOne('App\Pembangunan');
+	}
+	public function calon_mahasiswa()
+	{
+		return $this->belongsTo('App\Calon_mahasiswa');
+	}
+
+	public function pustaka_alma()
+	{
+		return $this->hasOne('App\Pustaka_alma');
 	}
 }

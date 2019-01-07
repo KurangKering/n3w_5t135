@@ -13,9 +13,9 @@
   <div class="col-lg-12">
     <div class="ibox float-e-margins">
       <div class="ibox-title">
-        <h5>Data Pendaftaran</h5>
+        <h5>Data Pembayaran Pustaka & Almamater</h5>
         <div class="ibox-tools">
-          <button onclick="location.href='{{ route('pendaftaran.create') }}'" class="btn btn-success">Tambah Pendaftaran</button>
+          <button onclick="location.href='{{ route('pustaka_alma.create') }}'" class="btn btn-success">Tambah Transaksi</button>
         </div>
       </div>
       <div class="ibox-content">
@@ -25,7 +25,7 @@
             <tr>
              <th>Kode Transaksi</th>
              <th>Nama</th>
-             <th>NISN</th>
+             <th>NIM</th>
              <th>Prodi</th>
              <th>Angkatan</th>
              <th>Tanggal</th>
@@ -36,21 +36,21 @@
          </thead>
          <tbody>
 
-          @foreach ($pendaftarans as $index => $detail)
+          @foreach ($pustaka_alma as $index => $detail)
 
           <tr>
             <td>{{ $detail->transaksi->id }}</td>
-            <td>{{ $detail->pendaftaran->calon_mahasiswa->nama }}</td>
-            <td>{{ $detail->pendaftaran->calon_mahasiswa->nisn }}</td>
-            <td>{{ $detail->pendaftaran->calon_mahasiswa->program_studi }}</td>
-            <td>{{ $detail->pendaftaran->calon_mahasiswa->tahun_masuk }}</td>
+            <td>{{ $detail->pustaka_alma->mahasiswa->calon_mahasiswa->nama }}</td>
+            <td>{{ $detail->pustaka_alma->mahasiswa->nim }}</td>
+            <td>{{ $detail->pustaka_alma->mahasiswa->calon_mahasiswa->program_studi }}</td>
+            <td>{{ $detail->pustaka_alma->mahasiswa->calon_mahasiswa->tahun_masuk }}</td>
             <td>{{ indonesian_date($detail->tanggal_bayar) }}</td>
             <td>{{ rupiah($detail->bayar_pustaka + $detail->bayar_alma + $detail->bayar_pendaftaran) }}</td>
             <td>{{ $detail->status }}</td>
             <td width="1%" style="white-space: nowrap">
-              <a target="_blank" href="{{ route('kwitansi.pendaftaran', $detail->id) }}" class="btn btn-info" title="">Print</a> 
+              <a target="_blank" href="{{ route('kwitansi.pustaka_alma', $detail->id) }}" class="btn btn-info" title="">Print</a> 
 
-              <a href="{{ route('pendaftaran.edit', $detail->id) }}" class="btn btn-primary">Edit</a>
+              <a href="{{ route('pustaka_alma.edit', $detail->id) }}" class="btn btn-primary">Edit</a>
               <a id="{{ $detail->id }}" class="btn-delete btn btn-warning btn-md">Delete</a></td>
             </tr>
             @endforeach
@@ -114,7 +114,7 @@
       },
       pageSize : "A4",
       orientation : 'portrait',
-      title : 'Data Pendaftaran',
+      title : 'Data Pustaka & Almamater',
       exportOptions : {
         columns: [ 0, 1,2,3,4,5,6,7 ]
       }
@@ -138,7 +138,7 @@
     .then((willDelete) => {
       if (willDelete) {
 
-        axios.post('{{ route('pendaftaran.index') .'/' }}' + id, {
+        axios.post('{{ route('pustaka_alma.index') .'/' }}' + id, {
           _method : 'DELETE',
           _token : '{{ csrf_token() }}',
 

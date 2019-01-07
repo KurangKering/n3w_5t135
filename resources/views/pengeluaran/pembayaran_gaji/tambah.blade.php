@@ -83,7 +83,7 @@
 						<div class="form-group">
 							<label class="control-label col-lg-2">Jumlah Gaji</label>
 							<div class="col-lg-10">
-								<input class="form-control" name="jumlah_gaji">
+								<input class="form-control" name="jumlah_gaji" value="{{ old('jumlah_gaji') }}">
 							</div>
 						</div>
 						<div class="form-group">

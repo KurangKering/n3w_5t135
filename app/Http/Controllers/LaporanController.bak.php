@@ -24,7 +24,7 @@ class LaporanController extends Controller
     {
         $pembayaran_semester_det = DB::table('pembayaran_semester_det')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id,
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id,
                 tanggal_bayar, 
                 jumlah_bayar as total_bayar'))
         ->join('transaksis', 
@@ -34,7 +34,7 @@ class LaporanController extends Controller
 
         $pembangunan_det = DB::table('pembangunan_det')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id, 
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
                 tanggal_bayar, 
                 jumlah_bayar as total_bayar'))
         ->join('transaksis',
@@ -44,7 +44,7 @@ class LaporanController extends Controller
 
         $pendaftaran_det = DB::table('pendaftaran_det')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id, 
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
                 tanggal_bayar, 
                  bayar_pendaftaran as total_bayar'))
         ->join('transaksis',
@@ -54,7 +54,7 @@ class LaporanController extends Controller
 
         $pustaka_alma_det = DB::table('pustaka_alma_det')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id, 
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
                 tanggal_bayar, 
                  (bayar_pustaka + bayar_alma) as total_bayar'))
         ->join('transaksis',
@@ -64,7 +64,7 @@ class LaporanController extends Controller
 
         $pemasukan_lains = DB::table('pemasukan_lains')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id, 
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
                 tanggal_bayar, 
                 total_bayar'))
         ->join('transaksis',
@@ -73,7 +73,7 @@ class LaporanController extends Controller
             'pemasukan_lains.transaksi_id');
         $pembayaran_gajis = DB::table('pembayaran_gajis')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id, 
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
                 tanggal_bayar, 
                 jumlah_gaji as total_bayar'))
         ->join('transaksis',
@@ -82,7 +82,7 @@ class LaporanController extends Controller
             'pembayaran_gajis.transaksi_id');
         $pengeluaran_lains = DB::table('pengeluaran_lains')
         ->select(
-            DB::raw(' transaksis.jenis_transaksi, transaksis.detail_transaksi, transaksi_id, 
+            DB::raw(' transaksis.jenis_transaksi, transaksi_id, 
                 tanggal_bayar, 
                 total_bayar'))
         ->join('transaksis',
@@ -129,20 +129,20 @@ class LaporanController extends Controller
 
 
 
-        $total['pemasukan']   = $transaksis->where('jenis_transaksi', 'pemasukan')->sum('total_bayar');
-        $total['pengeluaran'] = $transaksis->where('jenis_transaksi', 'pengeluaran')->sum('total_bayar');
+        $total['pemasukan']   = $transaksis->whereIn('jenis_transaksi', \Config::get('enums.pemasukan'))->sum('total_bayar');
+        $total['pengeluaran'] = $transaksis->whereIn('jenis_transaksi', \Config::get('enums.pengeluaran'))->sum('total_bayar');
         $total['seluruhnya']  = $total['pemasukan'] - $total['pengeluaran'];
 
 
-        $pemasukanLainIDs = $transaksis->where('detail_transaksi', 'Pemasukan Lain')->pluck('transaksi_id')->toArray();
-        $pengeluaranLainIDs = $transaksis->where('detail_transaksi', 'Pengeluaran Lain')->pluck('transaksi_id')->toArray();
+        $pemasukanLainIDs = $transaksis->where('jenis_transaksi', 'Pemasukan Lain')->pluck('transaksi_id')->toArray();
+        $pengeluaranLainIDs = $transaksis->where('jenis_transaksi', 'Pengeluaran Lain')->pluck('transaksi_id')->toArray();
 
         $pemasukan_lain = Pemasukan_lain::whereIn('transaksi_id', $pemasukanLainIDs)->get();
         $pengeluaran_lain = Pengeluaran_lain::whereIn('transaksi_id', $pengeluaranLainIDs)->get();
-        $transaksis->where('detail_transaksi', 'Pemasukan Lain')->each(function($i) use ($pemasukan_lain) {
+        $transaksis->where('jenis_transaksi', 'Pemasukan Lain')->each(function($i) use ($pemasukan_lain) {
             $i->jenis_lain = $pemasukan_lain->where('transaksi_id', $i->transaksi_id)->first()->jenis_bayar;
         });
-        $transaksis->where('detail_transaksi', 'Pengeluaran Lain')->each(function($i) use ($pengeluaran_lain) {
+        $transaksis->where('jenis_transaksi', 'Pengeluaran Lain')->each(function($i) use ($pengeluaran_lain) {
             $i->jenis_lain = $pengeluaran_lain->where('transaksi_id', $i->transaksi_id)->first()->jenis_bayar;
         });
 

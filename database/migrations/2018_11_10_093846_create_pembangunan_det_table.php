@@ -13,14 +13,15 @@ class CreatePembangunanDetTable extends Migration
      */
     public function up()
     {
-        Schema::create('pembangunan_det', function (Blueprint $table) {
-           $table->increments('id');
-           $table->unsignedDecimal('jumlah_bayar', 12,0)->nullable();
-           $table->date('tanggal_bayar')->nullable();
-           $table->unsignedInteger('transaksi_id')->nullable();
-           $table->unsignedInteger('pembangunan_id')->nullable();
-           $table->timestamps();
-       });
+      Schema::create('pembangunan_det', function (Blueprint $table) {
+       $table->increments('id');
+       $table->unsignedDecimal('jumlah_bayar', 12,0)->nullable();
+       $table->date('tanggal_bayar')->nullable();
+       $table->unsignedInteger('transaksi_id')->nullable();
+       $table->unsignedInteger('pembangunan_id')->nullable();
+       $table->string('status')->nullable();
+       $table->timestamps();
+     });
     }
 
     /**
@@ -30,6 +31,6 @@ class CreatePembangunanDetTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pembangunan_det');
+      Schema::dropIfExists('pembangunan_det');
     }
-}
+  }

@@ -170,7 +170,7 @@
 				<tr>
 					<th>Untuk</th>
 					<td>:</td>
-					<td>{{ $kwitansi->jenis_transaksi }}</td>
+					<td>{{ \Config::get('enums.jenis_transaksi')[$kwitansi->jenis_transaksi][$kwitansi->detail_transaksi] }}</td>
 				</tr>
 				<tr>
 					<th>Terbilang</th>

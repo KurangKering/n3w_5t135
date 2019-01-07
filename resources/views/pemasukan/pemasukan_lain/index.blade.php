@@ -27,6 +27,7 @@
             <thead>
               <tr>
                <th>Kode Transaksi</th>
+               <th>Dari</th>
                <th>Jenis</th>
                <th>Uraian</th>
                <th>Tanggal</th>
@@ -42,6 +43,7 @@
              @foreach ($pemasukan_lains as $index => $pemasukan_lain)
              <tr class="odd gradeX" data-total-bayar="{{ $pemasukan_lain->total_bayar }}">
               <td>{{ $pemasukan_lain->transaksi_id }}</td>
+              <td>{{ $pemasukan_lain->dari }}</td>
               <td>{{ $pemasukan_lain->jenis_bayar }}</td>
               <td>{{ $pemasukan_lain->uraian }}</td>
               <td>{{ indonesian_date($pemasukan_lain->tanggal_bayar, 'j F Y') }}</td>
@@ -84,7 +86,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $('#table-pemasukan-lain').DataTable({
-      order: [0, "desc"],
+      order: [],
       dom:  '<"html5buttons"B>lfrtip',
       buttons: [
 
@@ -131,7 +133,7 @@
       orientation : 'portrait',
       title : 'Data Pemasukan Lain',
       exportOptions : {
-        columns: [ 0, 1,2,3,4,5 ]
+        columns: [ 0, 1,2,3,4,5,6,7 ]
       }
     },
     ],

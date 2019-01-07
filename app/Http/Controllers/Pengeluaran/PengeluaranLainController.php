@@ -44,6 +44,7 @@ class PengeluaranLainController extends Controller
         $this->validate($request, [
             'lampiran' => 'sometimes|file|max:1000',
             'jenis_bayar' => 'required',
+            'dari' => 'required',
             'uraian' => 'required',
             'tanggal_bayar' => 'required',
             'total_bayar' => 'required|numeric',
@@ -55,7 +56,8 @@ class PengeluaranLainController extends Controller
 
 
         $transaksi = new Transaksi();
-        $transaksi->jenis_transaksi = "Pengeluaran Lain";
+        $transaksi->jenis_transaksi = 'pengeluaran';
+        $transaksi->detail_transaksi = 1;
         $transaksi->save();
 
         
@@ -64,6 +66,7 @@ class PengeluaranLainController extends Controller
         $pengeluaran_lain->lampiran    = $path;
         $pengeluaran_lain->jenis_bayar    = $request->get('jenis_bayar');
         $pengeluaran_lain->uraian         = $request->get('uraian');
+        $pengeluaran_lain->dari         = $request->get('dari');
         $pengeluaran_lain->tanggal_bayar  = $request->get('tanggal_bayar');
         $pengeluaran_lain->total_bayar    = $request->get('total_bayar');
         $pengeluaran_lain->keterangan     = $request->get('keterangan');
@@ -118,6 +121,8 @@ class PengeluaranLainController extends Controller
      $pengeluaran_lain                  = Pengeluaran_lain::find($id);
      $pengeluaran_lain->jenis_bayar    = $request->get('jenis_bayar');
      $pengeluaran_lain->uraian         = $request->get('uraian');
+     $pengeluaran_lain->dari         = $request->get('dari');
+     
      $pengeluaran_lain->tanggal_bayar  = $request->get('tanggal_bayar');
      $pengeluaran_lain->total_bayar    = $request->get('total_bayar');
      $pengeluaran_lain->keterangan     = $request->get('keterangan');
@@ -170,18 +175,19 @@ class PengeluaranLainController extends Controller
     {
         $transaksi = Pengeluaran_lain::findOrFail($id);
 
-      $kwitansi = new \stdClass();
-      $kwitansi->id_transaksi = $transaksi->transaksi_id;
-      $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
-      $kwitansi->nama = '';
-      $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
-      $kwitansi->jumlah_bayar = $transaksi->total_bayar;
-      $kwitansi->nama_penerima = \Auth::user()->name;
-      $kwitansi->nama_pembayar = '';
-      return view('kwitansi.template', compact('kwitansi'));
+        $kwitansi = new \stdClass();
+        $kwitansi->id_transaksi = $transaksi->transaksi_id;
+        $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
+        $kwitansi->nama = '';
+        $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
+        $kwitansi->detail_transaksi  = $transaksi->transaksi->detail_transaksi;
+        $kwitansi->jumlah_bayar = $transaksi->total_bayar;
+        $kwitansi->nama_penerima = \Auth::user()->name;
+        $kwitansi->nama_pembayar = '';
+        return view('kwitansi.template', compact('kwitansi'));
       // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
 
       // return $pdf->stream($transaksi->id .'-pemasukan_lain.pdf');
 
-  }
+    }
 }

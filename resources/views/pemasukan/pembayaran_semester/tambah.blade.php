@@ -48,12 +48,7 @@
 									<input readonly class="form-control" id="program_studi" >
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="" class="control-label col-lg-3">Angkatan</label>
-								<div class="col-lg-8">
-									<input readonly class="form-control" id="angkatan">
-								</div>
-							</div>
+							
 						</div>
 						<div class="col-lg-6">
 							<div class="form-group">
@@ -63,9 +58,9 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label col-lg-3">Kelas</label>
+								<label for="" class="control-label col-lg-3">Angkatan</label>
 								<div class="col-lg-8">
-									<input readonly class="form-control" id="jenis_kelas">
+									<input readonly class="form-control" id="angkatan">
 								</div>
 							</div>
 						</div>
@@ -132,7 +127,7 @@
 					
 					
 					<div class="text-center">
-						<button id="btn-simpan" type="button" class="btn btn-primary">Simpan</button>
+						<button id="btn-simpan" type="submit" class="btn btn-primary">Simpan</button>
 					</div>
 				</form>
 			</div>
@@ -193,7 +188,7 @@
 		},
 		"columns": [
 		{"data": "nim", "orderable" : false},
-		{"data": "nama_mhs"},
+		{"data": "calon_mahasiswa.nama"},
 		],
 		'columnDefs': [
 		{
@@ -209,8 +204,9 @@
 		]
 	});
 
-	$btnSimpan.click(function(e) {
-		$(this).attr('disabled', true);
+	$formSemester.submit(function(e) {
+		e.preventDefault();
+		$($btnSimpan).attr('disabled', true);
 		$errorArea.html("");
 		let id = inputID.val();
 		if (!id) {
@@ -223,7 +219,7 @@
 				closeOnClickOutside: false
 
 			})
-			$(this).attr('disabled', false);
+			$($btnSimpan).attr('disabled', false);
 
 			return;
 
@@ -265,10 +261,11 @@
 					title : "Gagal",
 					text : res.msg,
 					timer : 1000,
+					buttons : false,
 					closeOnClickOutside: false,
 				})
 			}
-			$(this).attr('disabled', false);
+			$($btnSimpan).attr('disabled', false);
 
 		})
 		.catch(err => {
@@ -290,7 +287,7 @@
 
 			$errorArea.html(contentErr);
 			$("html, body").animate({scrollTop : $errorArea.offset().top}, 'fast');
-			$(this).attr('disabled', false);
+			$($btnSimpan).attr('disabled', false);
 
 		})
 	})
@@ -306,10 +303,10 @@
 	{
 		var id = data.id;
 		var nim = data.nim;
-		var nama_mhs = data.nama_mhs;
-		var program_studi = data.program_studi;
-		var jenis_kelas = data.jenis_kelas;
-		var tahun_angkatan = data.tahun_masuk;
+		var nama_mhs = data.calon_mahasiswa.nama;
+		var program_studi = data.calon_mahasiswa.program_studi;
+		var jenis_kelas = data.calon_mahasiswa.jenis_kelas;
+		var tahun_angkatan = data.calon_mahasiswa.tahun_masuk;
 
 		$('input[name="mahasiswa_id"]').val(id);
 		$('#nim').val(nim);
@@ -477,7 +474,7 @@
 					class : 'text-center'
 				})
 				.attr({
-					colspan	: '5'
+					colspan	: '8'
 				})));
 		}
 	}

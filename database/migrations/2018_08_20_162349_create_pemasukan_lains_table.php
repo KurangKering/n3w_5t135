@@ -22,6 +22,7 @@ class CreatePemasukanLainsTable extends Migration
             $table->text('keterangan')->nullable();
             $table->string('lampiran')->nullable();
             $table->unsignedInteger('transaksi_id');
+            $table->string('dari');
             $table->timestamps();
 
          

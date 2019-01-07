@@ -49,32 +49,33 @@ Route::group(['middleware' => ['auth']], function() {
 	Route::get('profil', 'ProfilController@index')->name('profil.index');
 	Route::get('profil/edit', 'ProfilController@edit')->name('profil.edit');
 	Route::post('profil/update', 'ProfilController@update')->name('profil.update');
-/*
-|	Baris dibawah ini adalah baris Route::get custom json
-|
- */
-Route::get('jsonDataTables/semua_mahasiswa', 'DataTablesJsonController@semua_mahasiswa');
-Route::get('jsonDataTables/semua_pegawai', 'DataTablesJsonController@semua_pegawai');
-Route::get('jsonDataTables/semua_pembayaran_semester', 'DataTablesJsonController@semua_pembayaran_semester');
+	/*
+	|	Baris dibawah ini adalah baris Route::get custom json
+	|
+ 	*/
+	Route::get('jsonDataTables/semua_calon_mahasiswa', 'DataTablesJsonController@semua_calon_mahasiswa');
+	Route::get('jsonDataTables/semua_mahasiswa', 'DataTablesJsonController@semua_mahasiswa');
+	Route::get('jsonDataTables/semua_pegawai', 'DataTablesJsonController@semua_pegawai');
+	Route::get('jsonDataTables/semua_pembayaran_semester', 'DataTablesJsonController@semua_pembayaran_semester');
 
 
-Route::group(['middleware' => ['role:Administrator']], function() {
-	Route::resources([
-		'users'                         => 'UserController',
-		'roles'                         => 'RoleController',
-	]);
-});
+	Route::group(['middleware' => ['role:Administrator']], function() {
+		Route::resources([
+			'users'                         => 'UserController',
+			'roles'                         => 'RoleController',
+		]);
+	});
 
-Route::group(['middleware' => ['role:Ketua']], function() {
-	Route::resources([
-		'laporan'                         => 'LaporanController',
-		'history'                     => 'HistoryController',
+	Route::group(['middleware' => ['role:Ketua']], function() {
+		Route::resources([
+			'laporan'                         => 'LaporanController',
+			'history'                     => 'HistoryController',
 
 
-	]);
-});
+		]);
+	});
 
-Route::group(['middleware' => ['role:Member']], function() {
+	Route::group(['middleware' => ['role:Member']], function() {
 
 	/**
  	* Route untuk mahasiswa controller
@@ -83,7 +84,7 @@ Route::group(['middleware' => ['role:Member']], function() {
  		'as' => 'mahasiswa.show_pembangunan',
  		'uses' => 'MahasiswaController@show_pembangunan',
  	]);
- 		Route::get('mahasiswa/show_pembayaran_semester/{mahasiswa_id}', [
+ 	Route::get('mahasiswa/show_pembayaran_semester/{mahasiswa_id}', [
  		'as' => 'mahasiswa.show_pembayaran_semester',
  		'uses' => 'MahasiswaController@show_pembayaran_semester',
  	]);
@@ -113,6 +114,10 @@ Route::group(['middleware' => ['role:Member']], function() {
 	 * 
 	 */
 	
+	Route::get('pemasukan/pustaka_alma/{id}/kwitansi', 
+		'pemasukan\PustakaAlmaController@cetakKwitansi')
+	->name('kwitansi.pustaka_alma');
+
 	Route::get('pemasukan/pembangunan/{id}/kwitansi', 
 		'pemasukan\PembangunanController@cetakKwitansi')
 	->name('kwitansi.pembangunan');
@@ -146,11 +151,13 @@ Route::group(['middleware' => ['role:Member']], function() {
 
 	
 	Route::resources([
+		'calon_mahasiswa'				=> 'CalonMahasiswaController',
 		'mahasiswa'                     => 'MahasiswaController',
 		'pegawai'                       => 'PegawaiController',
+		'pemasukan/pustaka_alma'  		=> 'Pemasukan\PustakaAlmaController',
 		'pemasukan/pendaftaran'         => 'Pemasukan\PendaftaranController',
 		'pemasukan/pembayaran_semester' => 'Pemasukan\PembayaranSemesterController',
-		'pemasukan/pembangunan'      => 'Pemasukan\PembangunanController',
+		'pemasukan/pembangunan'     	=> 'Pemasukan\PembangunanController',
 		'pemasukan/pemasukan_lain'      => 'Pemasukan\PemasukanLainController',
 		'pengeluaran/pembayaran_gaji'   => 'Pengeluaran\PembayaranGajiController',
 		'pengeluaran/pengeluaran_lain'  => 'Pengeluaran\PengeluaranLainController',

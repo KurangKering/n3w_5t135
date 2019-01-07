@@ -15,12 +15,11 @@ class CreatePendaftaranDetTable extends Migration
     {
         Schema::create('pendaftaran_det', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedDecimal('bayar_pustaka', 12,0)->nullable();
-            $table->unsignedDecimal('bayar_alma', 12, 0)->nullable();
             $table->unsignedDecimal('bayar_pendaftaran', 12, 0)->nullable();
             $table->date('tanggal_bayar')->nullable();
             $table->unsignedInteger('transaksi_id')->nullable();
             $table->unsignedInteger('pendaftaran_id')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

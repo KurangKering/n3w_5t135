@@ -70,62 +70,58 @@
 		</div>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h5>Data Pembayaran Pembangunan</h5>
+				<h5>Data Pembayaran Pustaka & Almamater</h5>
 			</div>
 			<div class="ibox-content">
 				<table class="table table-bordered table-hover" id="table-data">
 					<thead>
 						<tr>
-							<th  width="1%" nowrap style="vertical-align: middle; text-align: center">Transaksi ID</th>
-							<th  style="vertical-align: middle; text-align: center">Tanggal Bayar</th>
-							<th  class="text-center" style="vertical-align: middle">Jumlah Bayar</th>
-							<th  class="text-center" style="vertical-align: middle">Action</th>
+							<th rowspan="2" width="1%" nowrap style="vertical-align: middle; text-align: center">Transaksi ID</th>
+							<th rowspan="2" style="vertical-align: middle; text-align: center">Tanggal Bayar</th>
+							<th colspan="2" class="text-center">Pembayaran</th>
+							<th rowspan="2" class="text-center" style="vertical-align: middle">Action</th>
 						</tr>
-
+						<tr>
+							<th>Pustaka</th>
+							<th>Almamater</th>
+						</tr>
 					</thead>
-					<tbody id="content-pembangunan">
+					<tbody id="content-pendaftaran">
 					</tbody> 
 				</table>
 			</div>
 		</div>
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h5>Form Pembayaran Pembangunan</h5>
+				<h5>Form Pembayaran Pendaftaran</h5>
 				<div class="ibox-tools">
 
 				</div>
-				<form method="POST" id="form-pembangunan" class="form-horizontal">
+				<form method="POST" id="form-pustaka-alma" class="form-horizontal">
 					<div class="ibox-content">
 						@csrf
 						<input type="hidden" name="mahasiswa_id" value="">
-						{{ Form::hidden('sisa', null) }}
 						<div class="form-group">
-							<label class="control-label col-lg-2">Sisa Biaya</label>
+							<label class="control-label col-lg-2">Uang Pustaka</label>
 							<div class="col-lg-10">
-								<input class="form-control" readonly type="text" name="sisa_biaya">
+								<input class="form-control" type="number" name="bayar_pustaka">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="control-label col-lg-2">Jumlah Bayar</label>
+							<label class="control-label col-lg-2">Uang Almamater</label>
 							<div class="col-lg-10">
-								<input class="form-control" type="number" name="jumlah_bayar">
+								<input class="form-control" type="number" name="bayar_alma">
 							</div>
 						</div>
 						
 
 						<div class="form-group">
 							<label class="control-label col-lg-2">Tanggal Pembayaran</label>
-							<div class="col-lg-6">
+							<div class="col-lg-10">
 								<input class="form-control" type="date"  value="{{ date('Y-m-d') }}" name="tanggal_bayar" id="example-date-input">
 							</div>
-							{{-- <label class="control-label col-lg-2">Status</label>
-							<div class="col-lg-2">
-								<select class="form-control" name="ket_bayar">
-									@foreach (\Config::get('enums.status_bayar') as $k => $v)
-									<option value="{{ $v }}">{{ $v }}</option>
-									@endforeach
-								</select>
-							</div> --}}
+							
+							
 
 						</div>
 
@@ -169,17 +165,17 @@
 	//
 	let container = {};
 
-	let biayaPembangunan = {{ Config::get('enums.biaya_pembangunan') }};
-	let $content = $("#content-pembangunan");
+	let $content = $("#content-pendaftaran");
 	let $lookup = $("#lookup");
 	let $btnSimpan = $("#btn-simpan");
 	let $btnSearch = $("#btn-search");
-	let $formPembangunan = $("#form-pembangunan");
+	let $formPustakaAlma = $("#form-pustaka-alma");
 	let $errorArea = $("#error-area");
 	//inputan 
-	let inputSisa = $("input[name=sisa]");
 	let inputID = $("input[name='mahasiswa_id']");
-	let inputJumlahBayar = $("input[name='jumlah_bayar']");
+	let inputPustaka = $("input[name='bayar_pustaka']");
+	let inputAlma = $("input[name='bayar_alma']");
+	let inputPendaftaran = $("input[name='bayar_pendaftaran']");
 	let inputTglBayar = $("input[name='tanggal_bayar']");
 	let inputKetBayar = $("input[name='ket_bayar']");
 	let dataTable = $lookup.DataTable({ 
@@ -217,9 +213,10 @@
 			buttons : false,
 			closeOnClickOutside: false,
 		});
-		axios.get("{{ url('mahasiswa/show_pembangunan') . '/' }}" + id)
+		axios.get("{{ route('mahasiswa.index') . '/' }}" + id)
 		.then(response => {
 			res = response.data;
+			console.log(res);
 			populateTable(res);
 			swal.close();
 		})
@@ -231,14 +228,9 @@
 
 	function populateTable(datas)
 	{
-		let sisaBiaya = biayaPembangunan;
-
-
 		$content.html("");
-		if (datas.pembangunan) {
-			sisaBiaya = sisaBiaya - datas.pembangunan.total_angka;
-
-			$.each(datas.pembangunan.pembangunan_det, function(index, pemb) {
+		if (datas.pustaka_alma) {
+			$.each(datas.pustaka_alma.pustaka_alma_det, function(index, pemb) {
 				let tr = $("<tr/>", {
 
 				});
@@ -249,8 +241,13 @@
 					text : pemb.tgl_bayar_manusia,
 				}))
 				.append($("<td/>", {
-					text : pemb.jumlah_bayar_manusia
+					text : pemb.bayar_pustaka_manusia
 				}))
+				.append($("<td/>", {
+					text : pemb.bayar_alma_manusia
+				}))
+				
+			
 				.append($("<td/>", {
 
 				})
@@ -265,7 +262,7 @@
 
 				})
 				.click(function(e) {
-					window.open('{{ url('pemasukan/pembangunan/') }}' + '\/' +pemb.id+'/kwitansi'); 
+					window.open('{{ url('pemasukan/pustaka_alma/') }}' + '\/' +pemb.id+'/kwitansi'); 
 
 				})
 				)
@@ -276,7 +273,7 @@
 
 				})
 				.click(function(e) {
-					location.href='{{ url('pemasukan/pembangunan') }}' + '\/' +pemb.id+"/edit"; 
+					location.href='{{ url('pemasukan/pustaka_alma') }}' + '\/' +pemb.id+"/edit"; 
 
 				})
 				)
@@ -297,7 +294,7 @@
 					.then(clicked => {
 						if (clicked) {
 							
-							var url = '{{ route('pembangunan.index') }}' + '/'+ pemb.id;
+							var url = '{{ route('pustaka_alma.index') }}' + '/'+ pemb.id;
 							axios.post(url, {
 								_method : "DELETE",
 								_token : '{{ csrf_token() }}',
@@ -330,7 +327,10 @@
 
 				)
 				.append($("<td/>", {
-					text : datas.pembangunan.total
+					text : datas.pustaka_alma.totalPustaka
+				}))
+				.append($("<td/>", {
+					text : datas.pustaka_alma.totalAlma
 				}))
 				);	
 
@@ -348,7 +348,8 @@
 
 				)
 				.append($("<td/>", {
-					text : datas.pembangunan.ket_bayar
+					text : datas.pustaka_alma.ket_bayar,
+					colspan : '2',
 				}))
 				);	
 		} else {
@@ -361,13 +362,6 @@
 					colspan	: '7'
 				})));
 		}
-
-		$('input[name="sisa"]').val(sisaBiaya);
-		$('input[name="sisa_biaya"]').val(convertToRupiah(sisaBiaya));
-
-
-		
-
 	}
 
 
@@ -406,9 +400,11 @@
 		modal.modal("show");
 	});
 	
-	$formPembangunan.submit(function(e) {
+	$formPustakaAlma.submit(function(e) {
 		e.preventDefault();
 
+		$($btnSimpan).attr('disabled', true);
+		$errorArea.html("");
 		let id = inputID.val();
 		if (!id) {
 			swal({
@@ -420,21 +416,26 @@
 				closeOnClickOutside: false
 
 			})
+			$($btnSimpan).attr('disabled', false);
 
 			return;
 
 		}
 		
-		
-
-		$errorArea.html("");
-		
-		$($btnSimpan).attr('disabled', true);
-		let formData = $formPembangunan.serialize();
-		axios.post('{{ route('pembangunan.store') }}', formData )
+		let formData = $formPustakaAlma.serialize();
+		axios.post('{{ route('pustaka_alma.store') }}', formData )
 		.then(response => {
-			res = response.data;
-			if (res.success) {
+			resp = response.data;
+			if (!resp.success) {
+				swal({
+					icon : 'warning',
+					title : "Gagal",
+					text : resp.msg,
+					buttons : false,
+					timer : 1500,
+					closeOnClickOutside: false,
+				})
+			} else {
 				swal({
 					icon : 'success',
 					title : "Sukses",
@@ -456,22 +457,13 @@
 						render(id);
 					} else if (clicked == 'kembali')
 					{
-						location.href= '{{ route('pembangunan.index') }}';
+						location.href= '{{ route('pustaka_alma.index') }}';
 
 					}
 
 				})
-			} else {
-				swal({
-					icon : 'warning',
-					title : 'Gagal',
-					text : res.msg,
-					timer : 1000,
-					buttons : false,
-					closeOnClickOutside: false
-
-				});
 			}
+
 			$($btnSimpan).attr('disabled', false);
 
 		})

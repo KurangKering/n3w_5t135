@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DataTables;
+use App\Calon_mahasiswa;
 use App\Mahasiswa;
 use App\Pegawai;
 use App\Pembayaran_semester;
@@ -14,9 +15,41 @@ use App\Pengeluaran_lain;
 
 class DataTablesJsonController extends Controller
 {
+	public function semua_calon_mahasiswa()
+	{
+		$mahasiswas = Calon_mahasiswa::with('pendaftaran.pendaftaran_det')->latest()->get();
+		$mahasiswas->each(function($ii) {
+			if ($ii->pendaftaran) {
+				$ii->pendaftaran->pendaftaran_det->each(function($iii) use($ii) {
+
+					$iii->tgl_bayar_manusia = indonesian_date($iii->tanggal_bayar);
+					$iii->bayar_pendaftaran_manusia = rupiah($iii->bayar_pendaftaran);
+
+					$ii->pendaftaran->total += $iii->bayar_pendaftaran;
+				});
+
+				$ii->pendaftaran->total = rupiah($ii->pendaftaran->total);	
+
+
+			}
+		});
+		
+
+		return DataTables::of($mahasiswas)
+		->addColumn('action', function($mahasiswa) {
+			return '<div style="display:flex;"> <a href="'.route('mahasiswa.show', $mahasiswa->id).'" class="btn btn-success">Detail</a>&nbsp;<a href="'.route('mahasiswa.edit', $mahasiswa->id).'" class="btn btn-warning">Edit</a>&nbsp;</div>';
+		})
+		->addColumn('nomor', null)
+		->make(true);
+
+		/*
+		column action except <a id="'.$mahasiswa->id.'" class="btn-delete btn btn-danger">Delete</a>
+		 */
+	}
+
 	public function semua_mahasiswa()
 	{
-		$mahasiswas = Mahasiswa::with('pembayaran_semester','pendaftaran.pendaftaran_det')->orderBy('mahasiswas.created_at', 'desc')->get();
+		$mahasiswas = Mahasiswa::with('calon_mahasiswa', 'pembayaran_semester','pustaka_alma.pustaka_alma_det')->orderBy('mahasiswas.created_at', 'desc')->get();
 		$mahasiswas->each(function($ii) {
 			if ($ii->pendaftaran) {
 				$ii->pendaftaran->pendaftaran_det->each(function($iii) use($ii) {

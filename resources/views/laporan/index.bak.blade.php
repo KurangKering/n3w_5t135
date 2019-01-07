@@ -63,8 +63,8 @@ td, th {
 						@endphp
 						<tr>
 							<td>{{ $transaksi->transaksi_id}}</td>
-							<td>{{ $transaksi->jenis_transaksi == 'pemasukan' ? $transaksi->detail_transaksi . $jenis_lain : '-' }}</td>
-							<td>{{ $transaksi->jenis_transaksi == 'pengeluaran' ? $transaksi->detail_transaksi . $jenis_lain : '-' }}</td>
+							<td>{{ in_array($transaksi->jenis_transaksi, \Config::get('enums.pemasukan')) ? $transaksi->jenis_transaksi . $jenis_lain : '-' }}</td>
+							<td>{{ in_array($transaksi->jenis_transaksi, \Config::get('enums.pengeluaran')) ? $transaksi->jenis_transaksi . $jenis_lain : '-' }}</td>
 
 							<td>{{ indonesian_date($transaksi->tanggal_bayar) }}</td>
 							<td>{{ rupiah($transaksi->total_bayar) }}</td>

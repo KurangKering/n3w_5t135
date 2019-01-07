@@ -17,19 +17,19 @@
 		
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
-				<h5>Data Mahasiswa</h5>
+				<h5>Data Calon Mahasiswa</h5>
 				<div class="ibox-tools">
 					
+					<button onclick="location.href='{{ route("calon_mahasiswa.create") }}'" class="btn btn-success">Tambah Calon Mahasiswa</button>
 
 				</div>
 			</div>
 			<div class="ibox-content">
-				<table id="table-mahasiswa" class="table table-striped table-bordered table-hover" >
+				<table id="table-calon-mahasiswa" class="table table-striped table-bordered table-hover" >
 					<thead>
 						<tr>
 							<th>Nama</th>
-							<th>NIM</th>
-							<th>Kelas</th>
+							<th>NISN</th>
 							<th>Prodi</th>
 							<th>Tahun Masuk</th>
 							<th>JK</th>
@@ -41,19 +41,18 @@
 						@php
 						$no = 1;
 						@endphp
-						@foreach ($mahasiswas as $mahasiswa)
+						@foreach ($calon_mahasiswas as $mahasiswa)
 						<tr>
-							<td>{{ $mahasiswa->calon_mahasiswa->nama }}</td>
-							<td>{{ $mahasiswa->nim }}</td>
-							<td>{{ $mahasiswa->calon_mahasiswa->jenis_kelas }}</td>
-							<td>{{ $mahasiswa->calon_mahasiswa->program_studi }}</td>
-							<td>{{ $mahasiswa->calon_mahasiswa->tahun_masuk }}</td>
-							<td>{{ $mahasiswa->calon_mahasiswa->jenis_kelamin }}</td>
-							<td>{{ $mahasiswa->calon_mahasiswa->no_hp }}</td>
+							<td>{{ $mahasiswa->nama }}</td>
+							<td>{{ $mahasiswa->nisn }}</td>
+							<td>{{ $mahasiswa->program_studi }}</td>
+							<td>{{ $mahasiswa->tahun_masuk }}</td>
+							<td>{{ $mahasiswa->jenis_kelamin }}</td>
+							<td>{{ $mahasiswa->no_hp }}</td>
 							<td class="text-center" width="1%" style="white-space: nowrap">
 								
 								<a onclick="show_modal('{{ $mahasiswa->id }}')" class="btn btn-info">Detail</a>
-								<a href="{{ route('mahasiswa.edit', $mahasiswa->id) }}" class="btn btn-primary">Edit</a>
+								<a href="{{ route('calon_mahasiswa.edit', $mahasiswa->id) }}" class="btn btn-primary">Edit</a>
 							</td>
 
 						</tr>
@@ -64,11 +63,11 @@
 		</div>
 	</div>
 </div>
-@include('mahasiswa.modal_mahasiswa_detail')
+@include('calon_mahasiswa.modal_calon_mahasiswa_detail')
 @endsection
 @section('custom_js')
 <script>
-	let table_mahasiswa = $("#table-mahasiswa").DataTable({
+	let table_mahasiswa = $("#table-calon-mahasiswa").DataTable({
 		dom:  '<"html5buttons"B>lfrtip',
 
 		buttons: [

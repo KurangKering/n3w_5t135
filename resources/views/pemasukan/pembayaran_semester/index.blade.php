@@ -27,12 +27,12 @@
                <th>Kode Transaksi</th>
                <th>Nama</th>
                <th>NIRM</th>
-               <th>Kelas</th>
                <th>Prodi</th>
                <th>Angkatan</th>
                <th>Semester</th>
                <th>Tanggal</th>
                <th>Jumlah Bayar</th>
+               <th>Status</th>
                <th class="text-center">Aksi</th>
              </tr>
            </thead>
@@ -40,16 +40,16 @@
              @foreach ($pembayaran_det as $index => $detail)
              <tr>
                <td width="1%" class="text-center">{{ $detail->transaksi_id }}</td>
-               <td>{{ $detail->pembayaran_semester->mahasiswa->nama_mhs }}</td>
+               <td>{{ $detail->pembayaran_semester->mahasiswa->calon_mahasiswa->nama }}</td>
                <td>{{ $detail->pembayaran_semester->mahasiswa->nim }}</td>
-               <td>{{ $detail->pembayaran_semester->mahasiswa->jenis_kelas }}</td>
-               <td>{{ $detail->pembayaran_semester->mahasiswa->program_studi }}</td>
-               <td>{{ $detail->pembayaran_semester->mahasiswa->tahun_masuk }}</td>
+               <td>{{ $detail->pembayaran_semester->mahasiswa->calon_mahasiswa->program_studi }}</td>
+               <td>{{ $detail->pembayaran_semester->mahasiswa->calon_mahasiswa->tahun_masuk }}</td>
                <td>{{ $detail->pembayaran_semester->semester }}</td>
 
                <td width="15%" class="text-center">{{ indonesian_date($detail->tanggal_bayar, 'j F Y') }}</td>
 
                <td>{{ rupiah($detail->jumlah_bayar) }}</td>
+               <td>{{ $detail->status }}</td>
                <td width="1%" style="white-space: nowrap"> 
                  <a target="_blank" href="{{ route('kwitansi.pembayaran_semester', $detail->id) }}" 
                   class="btn btn-info">
@@ -118,7 +118,7 @@
     })
 
     let dataTable = $table.DataTable({
-      order : [0, 'desc'],
+      order : [],
 
       dom:  '<"html5buttons"B>lfrtip',
       buttons: [
@@ -205,6 +205,7 @@
 
          swal("Data Berhasil Di Hapus", {
           icon: "success",
+          buttons : false,
           timer: 1000,
           
         });

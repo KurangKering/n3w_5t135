@@ -24,6 +24,7 @@
 					<thead>
 						<tr>
 							<th>Kode Transaksi</th>
+							<th>Dari</th>
 							<th>Jenis</th>
 							<th>Uraian</th>
 							<th>Tanggal</th>
@@ -37,6 +38,7 @@
 						@foreach ($pengeluaran_lains as $index => $pengeluaran_lain)
 						<tr>
 							<td>{{ $pengeluaran_lain->transaksi_id }}</td>
+							<td>{{ $pengeluaran_lain->dari }}</td>
 							<td>{{ $pengeluaran_lain->jenis_bayar }}</td>
 							<td>{{ $pengeluaran_lain->uraian }}</td>
 							<td>{{ indonesian_date($pengeluaran_lain->tanggal_bayar, 'j F Y') }}</td>

@@ -41,6 +41,12 @@
 				<form class="form-horizontal" method="POST" action="{{ route('pemasukan_lain.store') }}" enctype="multipart/form-data">
 					@csrf
 					<div class="form-group">
+						<label class="control-label col-lg-2">Dari</label>
+						<div class="col-lg-10">
+							<input type="text" class="form-control" name="dari" id="dari" value="{{ old('dari') }}">
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="control-label col-lg-2">Jenis Pembayaran</label>
 						<div class="col-lg-10">
 							<select class="form-control" name="jenis_bayar">

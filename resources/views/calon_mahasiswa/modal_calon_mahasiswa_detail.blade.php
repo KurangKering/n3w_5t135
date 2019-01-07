@@ -22,12 +22,12 @@
         <tr>
           <th>Nama Mahasiswa</th>
           <td>:</td>
-          <td><span id="nama_mhs"></span></td>
+          <td><span id="nama"></span></td>
         </tr>
         <tr>
-          <th>NIM</th>
+          <th>NISN</th>
           <td>:</td>
-          <td><span id="nim"></span></td>
+          <td><span id="nisn"></span></td>
         </tr>
         <tr>
           <th>Kelas</th>
@@ -69,7 +69,7 @@
 
 
   $("#modal-detail").iziModal({
-    title: 'Detail Mahasiswa',
+    title: 'Detail Calon Mahasiswa',
     subtitle: '',
     headerColor: '#676a6c',
     //   background: null,
@@ -130,7 +130,7 @@
 
   var show_modal = function(id)
   {
-   axios.get('{{ url('mahasiswa/') . '/' }}'+id, {
+   axios.get('{{ url('calon_mahasiswa/') . '/' }}'+id, {
    })
    .then(res => {
     response = res.data;
@@ -144,13 +144,13 @@
  
  var set_modal_data = function(data)
  {
-  $("#nama_mhs").text(data.calon_mahasiswa.nama);
-  $("#nim").text(data.nim);
-  $("#jenis_kelas").text(data.calon_mahasiswa.jenis_kelas);
-  $("#prodi").text(data.calon_mahasiswa.program_studi);
-  $("#angkatan").text(data.calon_mahasiswa.tahun_masuk);
-  $("#jk").text(data.calon_mahasiswa.jenis_kelamin);
-  $("#no_hp").text(data.calon_mahasiswa.no_hp);
+  $("#nama").text(data.nama);
+  $("#nisn").text(data.nisn);
+  $("#jenis_kelas").text(data.jenis_kelas);
+  $("#prodi").text(data.program_studi);
+  $("#angkatan").text(data.tahun_masuk);
+  $("#jk").text(data.jenis_kelamin);
+  $("#no_hp").text(data.no_hp);
 }
 
 

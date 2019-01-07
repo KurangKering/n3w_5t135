@@ -42,36 +42,31 @@
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group">
-								<label for="" class="control-label col-lg-3">NIM</label>
+								<label for="" class="control-label col-lg-3">NISN</label>
 								<div class="col-lg-8">
-									<input readonly class="form-control" id="nim" value="{{ $detail->pendaftaran->mahasiswa->nim }}">
+									<input readonly class="form-control" id="nisn" value="{{ $detail->pendaftaran->calon_mahasiswa->nisn }}">
 								</div>
 								
 							</div>
 							<div class="form-group">
 								<label for="" class="control-label col-lg-3">Program Studi</label>
 								<div class="col-lg-8">
-									<input readonly class="form-control" id="program_studi" value="{{ $detail->pendaftaran->mahasiswa->program_studi }}">
+									<input readonly class="form-control" id="program_studi" value="{{ $detail->pendaftaran->calon_mahasiswa->program_studi }}">
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="" class="control-label col-lg-3">Angkatan</label>
-								<div class="col-lg-8">
-									<input readonly class="form-control" id="angkatan" value="{{ $detail->pendaftaran->mahasiswa->tahun_masuk }}">
-								</div>
-							</div>
+							
 						</div>
 						<div class="col-lg-6">
 							<div class="form-group">
 								<label for="" class="control-label col-lg-3">Nama Mahasiswa</label>
 								<div class="col-lg-8">
-									<input readonly class="form-control" id="nama_mhs" value="{{ $detail->pendaftaran->mahasiswa->nama_mhs }}" >
+									<input readonly class="form-control" id="nama" value="{{ $detail->pendaftaran->calon_mahasiswa->nama }}" >
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="" class="control-label col-lg-3">Kelas</label>
+								<label for="" class="control-label col-lg-3">Angkatan</label>
 								<div class="col-lg-8">
-									<input readonly class="form-control" id="jenis_kelas" value="{{ $detail->pendaftaran->mahasiswa->jenis_kelas }}">
+									<input readonly class="form-control" id="angkatan" value="{{ $detail->pendaftaran->calon_mahasiswa->tahun_masuk }}">
 								</div>
 							</div>
 						</div>
@@ -91,6 +86,7 @@
 					<div class="ibox-content">
 						@csrf
 						<input type="hidden" name="mahasiswa_id" value="">
+						{{ Form::hidden('sisa', $sisa_bayar) }}
 						<div class="form-group">
 							<label class="control-label col-lg-2">Transaksi ID</label>
 							<div class="col-lg-10">
@@ -98,17 +94,12 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="control-label col-lg-2">Uang Pustaka</label>
+							<label class="control-label col-lg-2">Sisa Biaya</label>
 							<div class="col-lg-10">
-								<input class="form-control" name="bayar_pustaka" value="{{ $detail->bayar_pustaka }}">
+								<input class="form-control" readonly name="" value="{{ rupiah($sisa_bayar) }}">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="control-label col-lg-2">Uang Almamater</label>
-							<div class="col-lg-10">
-								<input class="form-control" name="bayar_alma" value="{{ $detail->bayar_alma }}">
-							</div>
-						</div>
+						
 						<div class="form-group">
 							<label class="control-label col-lg-2">Uang Pendaftaran</label>
 							<div class="col-lg-10">
@@ -118,22 +109,10 @@
 
 						<div class="form-group">
 							<label class="control-label col-lg-2">Tanggal Pembayaran</label>
-							<div class="col-lg-6">
+							<div class="col-lg-10">
 								<input class="form-control" type="date"  value="{{ $detail->tanggal_bayar }}" name="tanggal_bayar" id="example-date-input">
 							</div>
-							<label class="control-label col-lg-2">Status</label>
-							<div class="col-lg-2">
-								<select class="form-control" name="ket_bayar">
-									@foreach (Config::get('enums.status_bayar') as $index => $status)
-									<option value="{{ $status }}"
-
-									@if ($status == $detail->pendaftaran->ket_bayar)
-									selected="selected" 
-									@endif
-									>{{ $status }}</option>
-									@endforeach
-								</select>
-							</div>
+							
 
 						</div>
 
@@ -155,16 +134,11 @@
 				<table class="table table-bordered" id="table-data">
 					<thead>
 						<tr>
-							<th rowspan="2" width="1%" nowrap style="vertical-align: middle; text-align: center">Transaksi ID</th>
-							<th rowspan="2" style="vertical-align: middle; text-align: center">Tanggal Bayar</th>
-							<th colspan="3" class="text-center">Pembayaran</th>
-							<th rowspan="2" class="text-center" style="vertical-align: middle">Jumlah</th>
+							<th  width="1%" nowrap style="vertical-align: middle; text-align: center">Transaksi ID</th>
+							<th  style="vertical-align: middle; text-align: center">Tanggal Bayar</th>
+							<th  class="text-center">Pembayaran</th>
+							<th  class="text-center" style="vertical-align: middle">Jumlah</th>
 							
-						</tr>
-						<tr>
-							<th>Pustaka</th>
-							<th>Almamater</th>
-							<th>Pendaftaran</th>
 						</tr>
 					</thead>
 					<tbody id="content-pendaftaran">
@@ -178,18 +152,16 @@
 						<tr>
 							<td>{{ $v['transaksi_id'] }}</td>
 							<td>{{ indonesian_date($v['tanggal_bayar']) }}</td>
-							<td>{{ rupiah($v['bayar_pustaka']) }}</td>
-							<td>{{ rupiah($v['bayar_alma']) }}</td>
 							<td>{{ rupiah($v['bayar_pendaftaran']) }}</td>
 							<td>{{ rupiah($v['jumlah']) }}</td>
 						</tr>
 						@endforeach
 						<tr>
-							<td colspan="5" style="font-weight: bold; text-align: right">Total</td>
+							<td colspan="3" style="font-weight: bold; text-align: right">Total</td>
 							<td>{{ rupiah($total) }}</td>
 						</tr>
 						<tr>
-							<td colspan="5" style="font-weight: bold; text-align: right">Status</td>
+							<td colspan="3" style="font-weight: bold; text-align: right">Status</td>
 							<td>{{ ($detail->pendaftaran->ket_bayar) }}</td>
 						</tr>
 					</tbody>
@@ -202,6 +174,10 @@
 @endsection
 @section('custom_js')
 <script type="text/javascript">
+	let $inputSisa = $("input[name=sisa]");
+	let $inputJumlah = $("input[name=bayar_pendaftaran]");
+	let biayaPembangunan = {{ Config::get('enums.biaya_pendaftaran') }};
+
 	$(document).ready(function() {
 		$("#lookup").dataTable();
 
@@ -225,6 +201,27 @@
 		$('#angkatan').val(tahun_angkatan);
 		$('#myModal').modal('hide');
 	});
+
+	$('form').submit(function(e) {
+		
+		let valJumlah = parseInt($inputJumlah.val());
+		let valSisa = parseInt($inputSisa.val());
+		if (valJumlah > valSisa) {
+			swal({
+				icon : 'warning',
+				title : 'Gagal',
+				text : 'Jumlah Lebih Besar Dari Sisa',
+				timer : 1000,
+				buttons : false,
+				closeOnClickOutside: false
+
+			});
+			return false;
+		} 
+
+
+	})
+
 
 </script>
 @endsection

@@ -55,7 +55,8 @@ class PembayaranGajiController extends Controller
         $path = $uploadedFile ? $uploadedFile->store('pembayaran_gaji/lampiran') : '';
 
         $transaksi = new Transaksi();
-        $transaksi->jenis_transaksi = "Pembayaran Semester";
+        $transaksi->jenis_transaksi = 'pengeluaran';
+        $transaksi->detail_transaksi = 0;
         $transaksi->save();
 
 
@@ -171,6 +172,8 @@ class PembayaranGajiController extends Controller
         $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
         $kwitansi->nama = $transaksi->pegawai->nama_pegawai;
         $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
+        $kwitansi->detail_transaksi  = $transaksi->transaksi->detail_transaksi;
+
         $kwitansi->jumlah_bayar = $transaksi->jumlah_gaji;
         $kwitansi->nama_penerima = \Auth::user()->name;
         $kwitansi->nama_pembayar = $transaksi->pegawai->nama_pegawai;

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePembayaranSemesterDetTable extends Migration
+class CreatePustakaAlmaDetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreatePembayaranSemesterDetTable extends Migration
      */
     public function up()
     {
-        Schema::create('pembayaran_semester_det', function (Blueprint $table) {
+        Schema::create('pustaka_alma_det', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedDecimal('jumlah_bayar', 12,0)->nullable();
+             $table->unsignedDecimal('bayar_pustaka', 12,0)->nullable();
+            $table->unsignedDecimal('bayar_alma', 12, 0)->nullable();
             $table->date('tanggal_bayar')->nullable();
             $table->unsignedInteger('transaksi_id')->nullable();
-            $table->unsignedInteger('pembayaran_semester_id')->nullable();
+            $table->unsignedInteger('pustaka_alma_id')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });
@@ -31,6 +32,6 @@ class CreatePembayaranSemesterDetTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pembayaran_semester_det');
+        Schema::dropIfExists('pustaka_alma__det');
     }
 }

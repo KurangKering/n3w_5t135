@@ -27,7 +27,10 @@ class Transaksi extends Model
 	{
 		return $this->hasOne('App\Pengeluaran_lain');
 	}
-
+	public function pustaka_alma_det()
+	{
+		return $this->hasOne('App\Pustaka_alma_det');
+	}
 	
 
 }

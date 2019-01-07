@@ -25,11 +25,25 @@ return [
 		'Perlengkapan',
 		'Akreditasi',
 	],
+	'jenis_transaksi' => [
+		'pemasukan' => [
+			'Pendaftaran',
+			'Pustaka & Almamater',
+			'Pembangunan',
+			'Pembayaran Semester',
+			'Pemasukan Lain',
+		],
+		'pengeluaran' => [
+			'Pembayaran Gaji',
+			'Pengeluaran Lain'
+		],
+	],
 	'pemasukan' => [
-		'Pemasukan Lain',
-		'Pembayaran Semester',
 		'Pendaftaran',
-		'Pembangunan'
+		'Pustaka & Almamater',
+		'Pembangunan',
+		'Pembayaran Semester',
+		'Pemasukan Lain',
 	],
 	'pengeluaran' => [
 		'Pembayaran Gaji',
@@ -52,6 +66,14 @@ return [
 		'-1' => 'tidak aktif',
 	],
 
+	'biaya_pustaka' => 500000,
+	'biaya_alma' => 500000,
 	'biaya_pembangunan' => 500000,
+	'biaya_pendaftaran' => 500000,
 	'biaya_semester' => 500000,
+	'status_calon_mahasiswa' => [ 
+		'1'  => 'lulus',
+		'0'  => 'belum lulus',
+		'-1'  => 'tidak lulus',
+	],
 ];

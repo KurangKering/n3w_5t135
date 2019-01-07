@@ -40,7 +40,12 @@
 				<form method="POST" enctype="multipart/form-data" action="{{ route('pengeluaran_lain.store') }}" class="form-horizontal">
 					<div class="ibox-content">
 						@csrf
-
+						<div class="form-group">
+							<label class="control-label col-lg-2">Dari</label>
+							<div class="col-lg-10">
+								<input type="text" class="form-control" name="dari" id="dari" value="{{ old('dari') }}">
+							</div>
+						</div>
 
 						<div class="form-group">
 							<label class="control-label col-lg-2">Jenis Pembayaran</label>

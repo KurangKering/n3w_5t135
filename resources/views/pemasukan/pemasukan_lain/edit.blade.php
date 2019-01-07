@@ -43,6 +43,12 @@
 					{{ method_field('PATCH') }}
 
 					<div class="form-group">
+						<label class="control-label col-lg-2">Dari</label>
+						<div class="col-lg-10">
+							<input type="text" class="form-control" name="dari" id="dari" value="{{ $pemasukan_lain->dari }}">
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="control-label col-lg-2">Kode Transaksi</label>
 						<div class="col-lg-10">
 							<input class="form-control" readonly="" name="kode_transaksi" value="{{ $pemasukan_lain->transaksi_id }}">

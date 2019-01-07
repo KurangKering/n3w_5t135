@@ -20,7 +20,7 @@ class PembangunanController extends Controller
      */
     public function index()
     { 
-      $pembangunans = Pembangunan_det::with('pembangunan.mahasiswa')->get();
+      $pembangunans = Pembangunan_det::with('pembangunan.mahasiswa')->latest()->get();
       return view('pemasukan.pembangunan.index', compact('pembangunans'));
     }
     /**
@@ -77,35 +77,38 @@ class PembangunanController extends Controller
     }
 
     $transaksi = new Transaksi();
-    $transaksi->jenis_transaksi = "Pembangunan";
+
+    $transaksi->jenis_transaksi = 'pemasukan';
+    $transaksi->detail_transaksi = 2;
     $transaksi->save();
+
+    $total = $pembangunan->pembangunan_det->sum('jumlah_bayar') + $request->get('jumlah_bayar');
+    $isLunas = $total == $biayaPembangunan ? 'Lunas' : 'Angsur';
+
 
     $detail = new Pembangunan_det();
     $detail->jumlah_bayar = $request->get('jumlah_bayar');
     $detail->tanggal_bayar = $request->get('tanggal_bayar');
     $detail->transaksi_id = $transaksi->getKey();
     $detail->pembangunan_id = $pembangunan->id;
+    $detail->status = $isLunas;
     $detail->save();
 
+    $pembangunan->ket_bayar = $isLunas;
+    $pembangunan->save();
 
 
-    $pembangunan = $detail->pembangunan;
-    $total = $pembangunan->pembangunan_det->sum('jumlah_bayar');
-    $isLunas = $total == $biayaPembangunan;
-    if ($isLunas) {
-     $pembangunan->ket_bayar = 'Lunas';
-   } else {
-    $pembangunan->ket_bayar = 'Angsur';
+
+
+    $pembangunan->save();
+
+
+
+
+    LogHelper::addToLog("Menambah Transaksi Pembangunan dengan pembangunan_id : $pembangunan->getKey() dan pembangunan_det_id = $detail->getKey() ");
+    return response()->json(['success' => true]);
+
   }
-  $pembangunan->save();
-
-
-
-
-  LogHelper::addToLog("Menambah Transaksi Pembangunan dengan pembangunan_id : $pembangunan->getKey() dan pembangunan_det_id = $detail->getKey() ");
-  return response()->json(['success' => true]);
-
-}
 
     /**
      * Display the specified resource.
@@ -154,28 +157,34 @@ class PembangunanController extends Controller
     ]);
 
      $detail = Pembangunan_det::findOrFail($id);
+     $pembangunan = $detail->pembangunan;
+
+     $jumlahSebagian = $pembangunan->pembangunan_det->where('id', '!=', $id)->sum('jumlah_bayar');
+     $jumlahSeluruh = $jumlahSebagian + $request->get('jumlah_bayar');
+     $biayaPembangunan = \Config::get('enums.biaya_pembangunan');
+     $status = $biayaPembangunan == $jumlahSeluruh ? 'Lunas' : 'Angsur';
+
+     $pembangunan->pembangunan_det->where('status', 'Lunas')->each(function($i) {
+      $i->status = 'Angsur';
+      $i->save();
+    });
+
+
      $detail->jumlah_bayar = $request->get('jumlah_bayar');
      $detail->tanggal_bayar = $request->get('tanggal_bayar');
+     $detail->status = $status;
      $detail->save();
 
-     $sisa = $request->get('sisa');
-     $biayaPembangunan = \Config::get('enums.biaya_pembangunan');
-     $total = 0;
 
-     $pembangunan = $detail->pembangunan;
-     $total = $pembangunan->pembangunan_det->sum('jumlah_bayar');
-     $isLunas = $total == $biayaPembangunan;
-     if ($isLunas) {
-       $pembangunan->ket_bayar = 'Lunas';
-     } else {
-      $pembangunan->ket_bayar = 'Angsur';
-    }
-    $pembangunan->save();
 
-    LogHelper::addToLog('Merubah Data Detail pembangunan dengan pembangunan_det_id : '. $detail->getKey());
+     $pembangunan->ket_bayar = $status;
+     $pembangunan->save();
 
-    return redirect(route('pembangunan.index'));
-  }
+
+     LogHelper::addToLog('Merubah Data Detail pembangunan dengan pembangunan_det_id : '. $detail->getKey());
+
+     return redirect(route('pembangunan.index'));
+   }
 
     /**
      * Remove the specified resource from storage.
@@ -200,6 +209,12 @@ class PembangunanController extends Controller
       $newMahasiswa = Mahasiswa::findOrFail($mahasiswa->id);
       $newMahasiswa->pembangunan->ket_bayar = 'Angsur';
       $newMahasiswa->pembangunan->save();
+
+      $newMahasiswa->pembangunan->pembangunan_det->where('status', 'Lunas')->each(function($i) {
+        $i->status = 'Angsur';
+        $i->save();
+      });
+
       if (empty($newMahasiswa->pembangunan->pembangunan_det->toArray())) {
         $newMahasiswa->pembangunan->delete();
       }
@@ -221,11 +236,13 @@ class PembangunanController extends Controller
       $kwitansi = new \stdClass();
       $kwitansi->id_transaksi = $transaksi->transaksi_id;
       $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
-      $kwitansi->nama = $transaksi->pembangunan->mahasiswa->nama_mhs;
+      $kwitansi->nama = $transaksi->pembangunan->mahasiswa->calon_mahasiswa->nama;
       $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
+      $kwitansi->detail_transaksi  = $transaksi->transaksi->detail_transaksi;
+
       $kwitansi->jumlah_bayar  = $transaksi->jumlah_bayar;
       $kwitansi->nama_penerima = \Auth::user()->name;
-      $kwitansi->nama_pembayar = $transaksi->pembangunan->mahasiswa->nama_mhs;
+      $kwitansi->nama_pembayar = $transaksi->pembangunan->mahasiswa->calon_mahasiswa->nama;
 
 
       return view ('kwitansi.template', compact('kwitansi'));

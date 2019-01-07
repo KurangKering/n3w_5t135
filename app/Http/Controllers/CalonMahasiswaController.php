@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Mahasiswa;
-use App\Pembayaran_semester;
+use App\Calon_mahasiswa;
 use LogHelper;
-class MahasiswaController extends Controller
+class CalonMahasiswaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +16,9 @@ class MahasiswaController extends Controller
     public function index()
     {
 
-     $mahasiswas = Mahasiswa::get();
-     return view('mahasiswa.index',  compact('mahasiswas'));
-   }
+     $calon_mahasiswas = Calon_Mahasiswa::get();
+     return view('calon_mahasiswa.index',  compact('calon_mahasiswas'));
+ }
 
     /**
      * Show the form for creating a new resource.
@@ -28,8 +27,8 @@ class MahasiswaController extends Controller
      */
     public function create()
     {
-      return view('mahasiswa.tambah');
-    }
+      return view('calon_mahasiswa.tambah');
+  }
 
     /**
      * Store a newly created resource in storage.
@@ -40,9 +39,8 @@ class MahasiswaController extends Controller
     public function store(Request $request)
     {
       $this->validate($request, [
-        'nim' => 'required|unique:mahasiswas,nim',
-        'nama_mhs' => 'required',
-        'jenis_kelas' => 'required',
+        'nisn' => 'required|unique:calon_mahasiswa,nisn',
+        'nama' => 'required',
         'program_studi' => 'required',
         'tahun_masuk' => 'required',
         'tempat_lahir' => 'required',
@@ -53,28 +51,29 @@ class MahasiswaController extends Controller
         'alamat' => 'required',
         'no_hp' => 'required',
         'email' => 'required|email',
-      ]);
-      $mahasiswa = new Mahasiswa();
-      $mahasiswa->nim = $request->get('nim');
-      $mahasiswa->nama_mhs = $request->get('nama_mhs');
-      $mahasiswa->jenis_kelas = $request->get('jenis_kelas');
-      $mahasiswa->program_studi = $request->get('program_studi');
-      $mahasiswa->tahun_masuk = $request->get('tahun_masuk');
-      $mahasiswa->tempat_lahir = $request->get('tempat_lahir');
-      $mahasiswa->tanggal_lahir = $request->get('tanggal_lahir');
-      $mahasiswa->jenis_kelamin = $request->get('jenis_kelamin');
-      $mahasiswa->agama = $request->get('agama');
-      $mahasiswa->asal_sekolah = $request->get('asal_sekolah');
-      $mahasiswa->alamat = $request->get('alamat');
-      $mahasiswa->no_hp = $request->get('no_hp');
-      $mahasiswa->email = $request->get('email');
+    ]);
 
-      $mahasiswa->save();
-      LogHelper::addToLog('Menambah Data Mahasiswa dengan id_mahasiswa : '. $mahasiswa->getKey());
-      return redirect(route('mahasiswa.index'));
+      $calon_mahasiswa = new Calon_mahasiswa();
+      $calon_mahasiswa->nisn = $request->get('nisn');
+      $calon_mahasiswa->nama = $request->get('nama');
+      $calon_mahasiswa->program_studi = $request->get('program_studi');
+      $calon_mahasiswa->tahun_masuk = $request->get('tahun_masuk');
+      $calon_mahasiswa->tempat_lahir = $request->get('tempat_lahir');
+      $calon_mahasiswa->tanggal_lahir = $request->get('tanggal_lahir');
+      $calon_mahasiswa->jenis_kelamin = $request->get('jenis_kelamin');
+      $calon_mahasiswa->agama = $request->get('agama');
+      $calon_mahasiswa->asal_sekolah = $request->get('asal_sekolah');
+      $calon_mahasiswa->alamat = $request->get('alamat');
+      $calon_mahasiswa->no_hp = $request->get('no_hp');
+      $calon_mahasiswa->email = $request->get('email');
+      $calon_mahasiswa->status = '0';
+
+      $calon_mahasiswa->save();
+      LogHelper::addToLog('Menambah Data Calon Mahasiswa dengan NISN  : '. $calon_mahasiswa->nisn);
+      return redirect(route('calon_mahasiswa.index'));
 
 
-    }
+  }
 
     /**
      * Show data single mahasiswa beserta data pembayaran semester,
@@ -84,7 +83,7 @@ class MahasiswaController extends Controller
     public function show_pembayaran_semester(Request $request, $id) 
     {
       $biayaSemester  = \Config::get('enums.biaya_semester');
-      $mahasiswa = Mahasiswa::with('pembayaran_semester.pembayaran_semester_det')->find($id);
+      $mahasiswa = Calon_Mahasiswa::with('pembayaran_semester.pembayaran_semester_det')->find($id);
       if ($mahasiswa->pembayaran_semester) {
         $mahasiswa->pembayaran_semester->each(function($iii) use ($biayaSemester) {
           $iii->total = 0;
@@ -93,23 +92,23 @@ class MahasiswaController extends Controller
             $iiii->jumlah_bayar_manusia = rupiah($iiii->jumlah_bayar);
 
             $iii->total += $iiii->jumlah_bayar;
-          });
+        });
           $iii->total_manusia = rupiah($iii->total);
           $iii->sisa = $biayaSemester - $iii->total;
           $iii->sisa_manusia = rupiah($iii->sisa);
-        });
-      }
+      });
+    }
 
-      if ($request->wantsJson())
-      {
+    if ($request->wantsJson())
+    {
 
         return $mahasiswa;
-      }
-
-      return $mahasiswa;
-      // return view('mahasiswa.detail', compact('mahasiswa'));
-
     }
+
+    return $mahasiswa;
+      // return view('calon_mahasiswa.detail', compact('mahasiswa'));
+
+}
     /**
      * Show data single mahasiswa beserta data pembangunan,
      * route('mahasiswa/show_pembangunan/{mahasiswa_id}')
@@ -118,7 +117,7 @@ class MahasiswaController extends Controller
     public function show_pembangunan(Request $request, $id) 
     {
 
-      $mahasiswa = Mahasiswa::find($id);
+      $mahasiswa = Calon_Mahasiswa::find($id);
       if ($mahasiswa->pembangunan) {
         $mahasiswa->pembangunan->pembangunan_det->each(function($iii) use($mahasiswa) {
 
@@ -127,21 +126,21 @@ class MahasiswaController extends Controller
 
           $mahasiswa->pembangunan->total_angka += $iii->jumlah_bayar;
           $mahasiswa->pembangunan->total += $iii->jumlah_bayar;
-        });
+      });
         $mahasiswa->pembangunan->total = rupiah($mahasiswa->pembangunan->total);  
 
-      }
+    }
 
-      if ($request->wantsJson())
-      {
+    if ($request->wantsJson())
+    {
 
         return $mahasiswa;
-      }
-
-      return $mahasiswa;
-      // return view('mahasiswa.detail', compact('mahasiswa'));
-
     }
+
+    return $mahasiswa;
+      // return view('calon_mahasiswa.detail', compact('mahasiswa'));
+
+}
 
     /**
      * Display the specified resource.
@@ -151,7 +150,7 @@ class MahasiswaController extends Controller
      */
     public function show(Request $request, $id)
     {
-      $mahasiswa = Mahasiswa::with('calon_mahasiswa', 'pembayaran_semester.pembayaran_semester_det', 'pustaka_alma.pustaka_alma_det')->find($id);
+      $mahasiswa = Calon_Mahasiswa::with('pendaftaran.pendaftaran_det')->find($id);
       if ($mahasiswa->pendaftaran) {
         $mahasiswa->pendaftaran->pendaftaran_det->each(function($iii) use($mahasiswa) {
           $jumlahBayar = $iii->bayar_pustaka+ $iii->bayar_alma + $iii->bayar_pendaftaran;
@@ -163,62 +162,21 @@ class MahasiswaController extends Controller
           $iii->jumlah_bayar_manusia = rupiah($jumlahBayar);
 
           $mahasiswa->pendaftaran->total += $jumlahBayar;
-        });
+      });
 
         $mahasiswa->pendaftaran->total = rupiah($mahasiswa->pendaftaran->total);  
-      }
+    }
 
-      if ($mahasiswa->pembayaran_semester) {
-        $mahasiswa->pembayaran_semester->each(function($iii) {
-          $iii->total = 0;
-          $iii->pembayaran_semester_det->each(function($iiii) use($iii) {
-            $iiii->tgl_bayar_manusia = indonesian_date($iiii->tanggal_bayar);
-            $iiii->jumlah_bayar_manusia = rupiah($iiii->jumlah_bayar);
 
-            $iii->total += $iiii->jumlah_bayar;
-          });
-          $iii->total_manusia = rupiah($iii->total);
-        });
-      }
-      if ($mahasiswa->pembangunan) {
-        $mahasiswa->pembangunan->pembangunan_det->each(function($iii) use($mahasiswa) {
-
-          $iii->tgl_bayar_manusia = indonesian_date($iii->tanggal_bayar);
-          $iii->jumlah_bayar_manusia = rupiah($iii->jumlah_bayar);
-
-          $mahasiswa->pembangunan->total_angka += $iii->jumlah_bayar;
-          $mahasiswa->pembangunan->total += $iii->jumlah_bayar;
-        });
-        $mahasiswa->pembangunan->total = rupiah($mahasiswa->pembangunan->total);  
-
-      }
-
-      if ($mahasiswa->pustaka_alma) {
-        $mahasiswa->pustaka_alma->pustaka_alma_det->each(function($iii) use($mahasiswa) {
-          $jumlahBayarPustaka = $iii->bayar_pustaka ;
-          $jumlahBayarAlma =  $iii->bayar_alma ;
-
-          $iii->tgl_bayar_manusia = indonesian_date($iii->tanggal_bayar);
-          $iii->bayar_pustaka_manusia = rupiah($iii->bayar_pustaka);
-          $iii->bayar_alma_manusia = rupiah($iii->bayar_alma);
-
-          $mahasiswa->pustaka_alma->totalPustaka += $jumlahBayarPustaka;
-          $mahasiswa->pustaka_alma->totalAlma += $jumlahBayarAlma;
-        });
-
-        $mahasiswa->pustaka_alma->totalPustaka = rupiah($mahasiswa->pustaka_alma->totalPustaka);  
-        $mahasiswa->pustaka_alma->totalAlma = rupiah($mahasiswa->pustaka_alma->totalAlma);  
-      }
-
-      if ($request->wantsJson())
-      {
+    if ($request->wantsJson())
+    {
 
         return $mahasiswa;
-      }
-
-      return $mahasiswa;
-      // return view('mahasiswa.detail', compact('mahasiswa'));
     }
+
+    return $mahasiswa;
+      // return view('calon_mahasiswa.detail', compact('mahasiswa'));
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -228,9 +186,9 @@ class MahasiswaController extends Controller
      */
     public function edit($id)
     {
-      $mahasiswa = Mahasiswa::find($id);
-      return view('mahasiswa.edit', compact('mahasiswa'));
-    }
+      $mahasiswa = Calon_Mahasiswa::find($id);
+      return view('calon_mahasiswa.edit', compact('mahasiswa'));
+  }
 
     /**
      * Update the specified resource in storage.
@@ -242,9 +200,8 @@ class MahasiswaController extends Controller
     public function update(Request $request, $id)
     {
       $this->validate($request, [
-        'nim' => 'required|unique:mahasiswas,nim,'.$id,
-        'nama_mhs' => 'required',
-        'jenis_kelas' => 'required',
+        'nisn' => 'required|unique:calon_mahasiswa,nisn,'.$id,
+        'nama' => 'required',
         'program_studi' => 'required',
         'tahun_masuk' => 'required',
         'tempat_lahir' => 'required',
@@ -255,13 +212,12 @@ class MahasiswaController extends Controller
         'alamat' => 'required',
         'no_hp' => 'required',
         'email' => 'required|email',
-      ]);
+    ]);
 
 
-      $mahasiswa                   = Mahasiswa::find($id);
-      $mahasiswa->nim              = $request->get('nim');
-      $mahasiswa->nama_mhs         = $request->get('nama_mhs');
-      $mahasiswa->jenis_kelas      = $request->get('jenis_kelas');
+      $mahasiswa                   = Calon_Mahasiswa::find($id);
+      $mahasiswa->nisn              = $request->get('nisn');
+      $mahasiswa->nama         = $request->get('nama');
       $mahasiswa->program_studi    = $request->get('program_studi');
       $mahasiswa->tahun_masuk   = $request->get('tahun_masuk');
       $mahasiswa->tempat_lahir     = $request->get('tempat_lahir');
@@ -274,10 +230,10 @@ class MahasiswaController extends Controller
       $mahasiswa->email            = $request->get('email');
 
       $mahasiswa->save();
-      LogHelper::addToLog('Merubah Data Mahasiswa dengan id_mahasiswa : '. $mahasiswa->getKey());
+      LogHelper::addToLog('Merubah Data Calon Mahasiswa dengan id_calon_mahasiswa : '. $mahasiswa->getKey());
 
-      return redirect(route('mahasiswa.index'));
-    }
+      return redirect(route('calon_mahasiswa.index'));
+  }
 
     /**
      * Remove the specified resource from storage.
@@ -287,16 +243,16 @@ class MahasiswaController extends Controller
      */
     public function destroy($id)
     {
-     $mahasiswa = Mahasiswa::find($id);
+     $mahasiswa = Calon_Mahasiswa::find($id);
      $mahasiswa->delete();
      LogHelper::addToLog('Menghapus Data Mahasiswa dengan id_mahasiswa : '. $mahasiswa->getKey());
 
      return redirect(route('mahasiswa.index'));
 
-   }
+ }
 
-   public function kodok()
-   {
+ public function kodok()
+ {
     return 'sadfasfas';
-  }
+}
 }

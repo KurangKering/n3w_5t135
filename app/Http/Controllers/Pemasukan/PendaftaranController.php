@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Pendaftaran;
 use App\Pendaftaran_det;
 use App\Mahasiswa;
+use App\Calon_mahasiswa;
 use App\Transaksi;
 use App\Pemasukan;
 use LogHelper;
@@ -23,7 +24,7 @@ class PendaftaranController extends Controller
     { 
 
 
-      $pendaftarans = Pendaftaran_det::with('pendaftaran.mahasiswa')->get();
+      $pendaftarans = Pendaftaran_det::with('pendaftaran.calon_mahasiswa')->latest()->get();
       return view('pemasukan.pendaftaran.index', compact('pendaftarans'));
     }
 
@@ -48,40 +49,74 @@ class PendaftaranController extends Controller
     {
 
      $this->validate($request, [
-      'bayar_pustaka' => 'required|numeric',
-      'bayar_alma' => 'required|numeric',
       'bayar_pendaftaran' => 'required|numeric',
       'tanggal_bayar' => 'required',
-      'mahasiswa_id' => 'required',
+      'calon_mahasiswa_id' => 'required',
     ]);
 
 
-     $transaksi = new Transaksi();
-     $transaksi->jenis_transaksi = "Pendaftaran";
-     $transaksi->save();
+     $biayaPendaftaran = \Config::get('enums.biaya_pendaftaran');
+     $total = 0;
+     $sisaBayar = $biayaPendaftaran;
+     $jumlah_bayar = $request->get('bayar_pendaftaran');
 
+     if ($jumlah_bayar == 0) {
+      return response()->json(['success' => false, 'msg' => 'Periksa Jumlah Bayar']);
 
-     
-     $pendaftaran = Pendaftaran::updateOrCreate(
+    }
+    $pendaftaran = Pendaftaran::firstOrCreate(
       [
-        'mahasiswa_id' => $request->get('mahasiswa_id'),
-      ], 
-      [
-        'ket_bayar' => $request->get('ket_bayar'),
+        'calon_mahasiswa_id' => $request->get('calon_mahasiswa_id'),
       ]);
 
-     $detail = new Pendaftaran_det();
-     $detail->bayar_pustaka = $request->get('bayar_pustaka');
-     $detail->bayar_alma = $request->get('bayar_alma');
-     $detail->bayar_pendaftaran = $request->get('bayar_pendaftaran');
-     $detail->tanggal_bayar = $request->get('tanggal_bayar');
-     $detail->transaksi_id = $transaksi->getKey();
-     $detail->pendaftaran_id = $pendaftaran->id;
-     $detail->save();
-     LogHelper::addToLog("Menambah Transaksi Pendaftaran dengan pendaftaran_id : $pendaftaran->getKey() dan pendaftaran_det_id = $detail->getKey() ");
-     return response()->json(['success' => true]);
+    $pendaftaran = Pendaftaran::where(['calon_mahasiswa_id' => $request->get('calon_mahasiswa_id')])->first();
+    if ($pendaftaran) {
+      if ($pendaftaran->ket_bayar == 'Lunas') {
+        return response()->json(['success' => false, 'msg' => 'Data Sudah Lunas']);
+      }
+      $sisaBayar = $biayaPendaftaran - $pendaftaran->pendaftaran_det->sum('bayar_pendaftaran');
+    }
 
-   }
+    if ($jumlah_bayar > $sisaBayar) {
+      return response()->json(['success' => false, 'msg' => 'Jumlah bayar lebih besar dari sisa']);
+
+    }
+
+
+    $transaksi = new Transaksi();
+
+    $transaksi->jenis_transaksi = 'pemasukan';
+    $transaksi->detail_transaksi = 0;
+    $transaksi->save();
+
+
+
+
+    $detail = new Pendaftaran_det();
+    $detail->bayar_pendaftaran = $request->get('bayar_pendaftaran');
+    $detail->tanggal_bayar = $request->get('tanggal_bayar');
+    $detail->transaksi_id = $transaksi->getKey();
+    $detail->pendaftaran_id = $pendaftaran->id;
+    $detail->save();
+
+    $pendaftaran = $detail->pendaftaran;
+    $total = $pendaftaran->pendaftaran_det->sum('bayar_pendaftaran');
+    $isLunas = 'Angsur';
+
+    if ($total == $biayaPendaftaran)
+    {
+      $isLunas = 'Lunas';
+    } 
+    $pendaftaran->ket_bayar = $isLunas; 
+    $pendaftaran->save();
+
+    $detail->status = $isLunas;
+    $detail->save();
+
+    LogHelper::addToLog("Menambah Transaksi Pendaftaran dengan pendaftaran_id : $pendaftaran->getKey() dan pendaftaran_det_id = $detail->getKey() ");
+    return response()->json(['success' => true]);
+
+  }
 
     /**
      * Display the specified resource.
@@ -103,9 +138,16 @@ class PendaftaranController extends Controller
      */
     public function edit($id)
     {
+      $biayaPendaftaran = \Config::get('enums.biaya_pendaftaran');
+      $total = 0;
 
+      
       $detail = Pendaftaran_det::with('pendaftaran.pendaftaran_det')->findOrFail($id); 
-      return view('pemasukan.pendaftaran.edit', compact('detail'));
+      $pendaftaran = $detail->pendaftaran;
+      $total = $pendaftaran->pendaftaran_det->where('id', '!=', $detail->id)->sum('bayar_pendaftaran');
+
+      $sisa_bayar = $biayaPendaftaran - $total;
+      return view('pemasukan.pendaftaran.edit', compact('detail', 'sisa_bayar'));
     }
 
     /**
@@ -118,24 +160,43 @@ class PendaftaranController extends Controller
     public function update(Request $request, $id)
     {
      $this->validate($request, [
-      'bayar_pustaka' => 'required|numeric',
-      'bayar_alma' => 'required|numeric',
       'bayar_pendaftaran' => 'required|numeric',
       'tanggal_bayar' => 'required',
-      'ket_bayar' => 'required',
     ]);
      $detail = Pendaftaran_det::findOrFail($id);
-     $detail->bayar_pustaka = $request->get('bayar_pustaka');
-     $detail->bayar_alma = $request->get('bayar_alma');
      $detail->bayar_pendaftaran = $request->get('bayar_pendaftaran');
      $detail->tanggal_bayar = $request->get('tanggal_bayar');
      $detail->save();
-     $detail->pendaftaran->ket_bayar = $request->get('ket_bayar');
-     $detail->pendaftaran->save();
-     LogHelper::addToLog('Merubah Data Detail Pendaftaran dengan pendaftaran_det_id : '. $detail->getKey());
 
-     return redirect(route('pendaftaran.index'));
-   }
+     $sisa = $request->get('sisa');
+     $biayaPendaftaran = \Config::get('enums.biaya_pendaftaran');
+     $total = 0;
+
+     $pendaftaran = $detail->pendaftaran;
+     $total = $pendaftaran->pendaftaran_det->sum('bayar_pendaftaran');
+     $isLunas = $total == $biayaPendaftaran;
+
+     $pendaftaran->pendaftaran_det->each(function($i) {
+      $i->status = 'Angsur';
+      $i->save();
+    });
+
+     if ($isLunas) {
+       $pendaftaran->ket_bayar = 'Lunas';
+       $detail->status = 'Lunas';
+     } else {
+      $pendaftaran->ket_bayar = 'Angsur';
+    }
+    $pendaftaran->save();
+    $detail->save();
+
+
+
+
+    LogHelper::addToLog('Merubah Data Detail Pendaftaran dengan pendaftaran_det_id : '. $detail->getKey());
+
+    return redirect(route('pendaftaran.index'));
+  }
 
     /**
      * Remove the specified resource from storage.
@@ -147,7 +208,7 @@ class PendaftaranController extends Controller
     {
 
 
-      $mahasiswa = Mahasiswa::with('pendaftaran.pendaftaran_det')->whereHas('pendaftaran.pendaftaran_det', function($i) use($id) {
+      $mahasiswa = Calon_mahasiswa::with('pendaftaran.pendaftaran_det')->whereHas('pendaftaran.pendaftaran_det', function($i) use($id) {
         $i->where('id', $id );
       })->get()->first();
 
@@ -156,8 +217,15 @@ class PendaftaranController extends Controller
       $detail = $mahasiswa->pendaftaran->pendaftaran_det->where('id',$id)->first();
       $delTransaksi = $detail->transaksi->delete();
       $delDetail = $detail->delete();
+      $detail->pendaftaran->ket_bayar = 'Angsur';
+      $detail->pendaftaran->save();
 
-      $newMahasiswa = Mahasiswa::findOrFail($mahasiswa->id);
+      $detail->pendaftaran->pendaftaran_det->each(function($i) {
+        $i->status = 'Angsur';
+        $i->save();
+      });
+
+      $newMahasiswa = Calon_mahasiswa::findOrFail($mahasiswa->id);
 
       if (empty($newMahasiswa->pendaftaran->pendaftaran_det->toArray())) {
         $newMahasiswa->pendaftaran->delete();
@@ -175,17 +243,17 @@ class PendaftaranController extends Controller
 
     public function cetakKwitansi($id)
     {
-      $transaksi = Pendaftaran_det::with('pendaftaran.mahasiswa')->findOrFail($id);
+      $transaksi = Pendaftaran_det::with('pendaftaran.calon_mahasiswa')->findOrFail($id);
 
       $kwitansi = new \stdClass();
       $kwitansi->id_transaksi = $transaksi->transaksi_id;
       $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
-      $kwitansi->nama = $transaksi->pendaftaran->mahasiswa->nama_mhs;
+      $kwitansi->nama = $transaksi->pendaftaran->calon_mahasiswa->nama;
       $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
-      $kwitansi->jumlah_bayar = $transaksi->bayar_alma + $transaksi->bayar_pustaka + $transaksi->bayar_pendaftaran;
+      $kwitansi->detail_transaksi  = $transaksi->transaksi->detail_transaksi;
+      $kwitansi->jumlah_bayar = $transaksi->bayar_pendaftaran;
       $kwitansi->nama_penerima = \Auth::user()->name;
-      $kwitansi->nama_pembayar = $transaksi->pendaftaran->mahasiswa->nama_mhs;
-
+      $kwitansi->nama_pembayar = $transaksi->pendaftaran->calon_mahasiswa->nama;
 
       return view ('kwitansi.template', compact('kwitansi'));
       // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));

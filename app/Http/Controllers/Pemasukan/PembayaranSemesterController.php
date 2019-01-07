@@ -81,7 +81,9 @@ class PembayaranSemesterController extends Controller
 
 
     $transaksi = new Transaksi();
-    $transaksi->jenis_transaksi = "Pembayaran Semester";
+
+    $transaksi->jenis_transaksi = 'pemasukan';
+    $transaksi->detail_transaksi = 3;
     $transaksi->save();
 
     $pembayaran = Pembayaran_semester::firstOrCreate(
@@ -91,30 +93,25 @@ class PembayaranSemesterController extends Controller
       ]
     );
 
-
+    $total = $pembayaran->pembayaran_semester_det->sum('jumlah_bayar') + $request->get('jumlah_bayar');
+    $isLunas = $total == $biayaSemester ? 'Lunas' : 'Angsur';
 
     $detail = new Pembayaran_semester_det();
     $detail->jumlah_bayar = $request->get('jumlah_bayar');
     $detail->tanggal_bayar = $request->get('tanggal_bayar');
     $detail->transaksi_id = $transaksi->getKey();
     $detail->pembayaran_semester_id = $pembayaran->getKey();
+    $detail->status = $isLunas;
     $detail->save();
 
-    $pembayaran_semester = $detail->pembayaran_semester;
-    $total = $pembayaran_semester->pembayaran_semester_det->sum('jumlah_bayar');
+    
+    $pembayaran->ket_bayar = $isLunas;
+    $pembayaran->save();
 
-    $isLunas = $total == $biayaSemester;
-    if ($isLunas) {
-     $pembayaran_semester->ket_bayar = 'Lunas';
-   } else {
-    $pembayaran_semester->ket_bayar = 'Angsur';
+    LogHelper::addToLog('Menambah Data Pembayaran Semester dengan id detail : '. $detail->getKey());
+    return response()->json(['success' => true]);
+
   }
-  $pembayaran_semester->save();
-
-  LogHelper::addToLog('Menambah Data Pembayaran Semester dengan id detail : '. $detail->getKey());
-  return response()->json(['success' => true]);
-
-}
 
     /**
      * Display the specified resource.
@@ -136,10 +133,20 @@ class PembayaranSemesterController extends Controller
      */
     public function edit($id)
     {
-      $detail = Pembayaran_semester_det::with('pembayaran_semester.mahasiswa')->findOrFail($id);
-      $mahasiswa = Mahasiswa::findOrFail($detail->pembayaran_semester->mahasiswa->id);
+      // $detail = Pembayaran_semester_det::with('pembayaran_semester.mahasiswa')->findOrFail($id);
 
-      return view('pemasukan.pembayaran_semester.edit', compact('detail', 'mahasiswa'));
+
+
+      $biayaSemester = \Config::get('enums.biaya_semester');
+      $total = 0;
+      $detail = Pembayaran_semester_det::with('pembayaran_semester.pembayaran_semester_det')->findOrFail($id); 
+      $pembayaran_semester = $detail->pembayaran_semester;
+      $total = $pembayaran_semester->pembayaran_semester_det->where('id', '!=', $detail->id)->sum('jumlah_bayar');
+      $mahasiswa = Mahasiswa::findOrFail($pembayaran_semester->mahasiswa->id);
+
+      $sisa_bayar = $biayaSemester - $total;
+      return view('pemasukan.pembayaran_semester.edit', compact('detail', 'sisa_bayar', 'mahasiswa'));
+      // return view('pemasukan.pembangunan.edit', compact('detail', 'sisa_bayar'));
     }
 
     /**
@@ -155,15 +162,36 @@ class PembayaranSemesterController extends Controller
      $this->validate($request, [
       'jumlah_bayar' => 'required|numeric',
       'tanggal_bayar' => 'required',
-      'status' => 'required',
       'mahasiswa_id' => 'required',
     ]);
+
+     $biayaSemester = \Config::get('enums.biaya_semester');
+
+     $detail = Pembayaran_semester_det::findOrFail($id);
+     $pembayaran = $detail->pembayaran_semester;
+
+     $jumlahSebagian = $pembayaran->pembayaran_semester_det->where('id', '!=', $id)->sum('jumlah_bayar');
+     $jumlahSeluruh = $jumlahSebagian + $request->get('jumlah_bayar');
+
+     $biayaSemester = \Config::get('enums.biaya_semester');
+
+     $status = $biayaSemester == $jumlahSeluruh ? 'Lunas' : 'Angsur';
+
+     $pembayaran->pembayaran_semester_det->where('status', 'Lunas')->each(function($i) {
+      $i->status = 'Angsur';
+      $i->save();
+    });
+
+
+
 
      $detail = Pembayaran_semester_det::findOrFail($id);
      $detail->jumlah_bayar = $request->get('jumlah_bayar');
      $detail->tanggal_bayar = $request->get('tanggal_bayar');
+     $detail->status = $status;
      $detail->save();
-     $detail->pembayaran_semester->ket_bayar = $request->get('status');
+
+     $detail->pembayaran_semester->ket_bayar = $status;
      $detail->pembayaran_semester->save();
 
      LogHelper::addToLog('Merubah Data Pembayaran Semester dengan detail id : '. $detail->getKey());
@@ -190,6 +218,11 @@ class PembayaranSemesterController extends Controller
       
       $pembayaran->ket_bayar = 'Angsur';
       $pembayaran->save();
+
+      $pembayaran->pembayaran_semester_det->where('status', 'Lunas')->each(function($i) {
+        $i->status = 'Angsur';
+        $i->save();
+      });
       if (empty($pembayaran->pembayaran_semester_det->toArray())) {
         $pembayaran->delete();
       }
@@ -211,6 +244,8 @@ class PembayaranSemesterController extends Controller
       $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
       $kwitansi->nama = $transaksi->pembayaran_semester->mahasiswa->nama_mhs;
       $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
+      $kwitansi->detail_transaksi  = $transaksi->transaksi->detail_transaksi;
+
       $kwitansi->jumlah_bayar = $transaksi->jumlah_bayar;
       $kwitansi->nama_penerima = \Auth::user()->name;
       $kwitansi->nama_pembayar = $transaksi->pembayaran_semester->mahasiswa->nama_mhs;

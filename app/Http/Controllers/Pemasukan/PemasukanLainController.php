@@ -19,7 +19,7 @@ class PemasukanLainController extends Controller
      */
     public function index()
     {
-        $pemasukan_lains = Pemasukan_lain::orderBy('id', 'asc')->get();
+        $pemasukan_lains = Pemasukan_lain::latest()->get();
         $cum_sum = 0;
         $pemasukan_lains->each(function($i) use(&$cum_sum) {
             $i->saldo_awal = $cum_sum;
@@ -55,6 +55,7 @@ class PemasukanLainController extends Controller
     {
 
         $this->validate($request, [
+            'dari' => 'required',
             'lampiran' => 'sometimes|file|max:1000',
             'jenis_bayar' => 'required',
             'uraian' => 'required',
@@ -69,7 +70,9 @@ class PemasukanLainController extends Controller
 
         $jenis = $request->get('jenis_bayar');
         $transaksi = new Transaksi();
-        $transaksi->jenis_transaksi = "Pemasukan Lain";
+
+        $transaksi->jenis_transaksi = 'pemasukan';
+        $transaksi->detail_transaksi = 4;
         $transaksi->save();
 
 
@@ -77,6 +80,7 @@ class PemasukanLainController extends Controller
         $pemasukan_lain                  = new Pemasukan_lain();
         $pemasukan_lain->lampiran       = $path;
         $pemasukan_lain->jenis_bayar    = $request->get('jenis_bayar');
+        $pemasukan_lain->dari    = $request->get('dari');
         $pemasukan_lain->uraian         = $request->get('uraian');
         $pemasukan_lain->tanggal_bayar  = $request->get('tanggal_bayar');
         $pemasukan_lain->total_bayar    = $request->get('total_bayar');
@@ -124,6 +128,7 @@ class PemasukanLainController extends Controller
         $this->validate($request, [
 
             // 'lampiran' => 'sometimes|file|max:1000',
+            'dari' => 'required',
             'jenis_bayar' => 'required',
             'uraian' => 'required',
             'tanggal_bayar' => 'required',
@@ -136,6 +141,7 @@ class PemasukanLainController extends Controller
         $pemasukan_lain                  = Pemasukan_lain::find($id);
         $pemasukan_lain->jenis_bayar    = $request->get('jenis_bayar');
         $pemasukan_lain->uraian         = $request->get('uraian');
+        $pemasukan_lain->dari         = $request->get('dari');
         $pemasukan_lain->tanggal_bayar  = $request->get('tanggal_bayar');
         $pemasukan_lain->total_bayar    = $request->get('total_bayar');
         $pemasukan_lain->keterangan     = $request->get('keterangan');
@@ -193,12 +199,13 @@ class PemasukanLainController extends Controller
       $kwitansi = new \stdClass();
       $kwitansi->id_transaksi = $transaksi->transaksi_id;
       $kwitansi->tanggal_bayar = $transaksi->tanggal_bayar;
-      $kwitansi->nama = '';
-      $kwitansi->jenis_transaksi  = $transaksi->jenis_transaksi;
+      $kwitansi->nama = $transaksi->dari;
+      $kwitansi->jenis_transaksi  = $transaksi->transaksi->jenis_transaksi;
+      $kwitansi->detail_transaksi  = $transaksi->transaksi->detail_transaksi;
+
       $kwitansi->jumlah_bayar = $transaksi->total_bayar;
       $kwitansi->nama_penerima = \Auth::user()->name;
-      $kwitansi->nama_pembayar = '';
-
+      $kwitansi->nama_pembayar = $transaksi->dari;
       return view('kwitansi.template', compact('kwitansi'));
       // $pdf = \PDF::loadView('kwitansi.template', compact('kwitansi'));
 

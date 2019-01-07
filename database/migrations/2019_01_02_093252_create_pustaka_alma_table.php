@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCalonMahasiswaTable extends Migration
+class CreatePustakaAlmaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class CreateCalonMahasiswaTable extends Migration
      */
     public function up()
     {
-        Schema::create('calon_mahasiswa', function (Blueprint $table) {
+        Schema::create('pustaka_alma', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('ket_bayar')->nullable();
+            $table->unsignedInteger('mahasiswa_id');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ class CreateCalonMahasiswaTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('calon_mahasiswa');
+        Schema::dropIfExists('pustaka_alma');
     }
 }

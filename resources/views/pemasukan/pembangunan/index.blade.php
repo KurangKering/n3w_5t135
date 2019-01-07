@@ -26,11 +26,11 @@
              <th>Kode Transaksi</th>
              <th>Nama</th>
              <th>NIRM</th>
-             <th>Kelas</th>
              <th>Prodi</th>
              <th>Angkatan</th>
              <th>Tanggal</th>
              <th>Jumlah Bayar</th>
+             <th>Status</th>
              <th class="text-center">Aksi</th>
            </tr>
          </thead>
@@ -40,13 +40,13 @@
 
           <tr>
             <td>{{ $detail->transaksi->id }}</td>
-            <td>{{ $detail->pembangunan->mahasiswa->nama_mhs }}</td>
+            <td>{{ $detail->pembangunan->mahasiswa->calon_mahasiswa->nama }}</td>
             <td>{{ $detail->pembangunan->mahasiswa->nim }}</td>
-            <td>{{ $detail->pembangunan->mahasiswa->jenis_kelas }}</td>
-            <td>{{ $detail->pembangunan->mahasiswa->program_studi }}</td>
-            <td>{{ $detail->pembangunan->mahasiswa->tahun_masuk }}</td>
+            <td>{{ $detail->pembangunan->mahasiswa->calon_mahasiswa->program_studi }}</td>
+            <td>{{ $detail->pembangunan->mahasiswa->calon_mahasiswa->tahun_masuk }}</td>
             <td>{{ indonesian_date($detail->tanggal_bayar) }}</td>
             <td>{{ rupiah($detail->jumlah_bayar) }}</td>
+            <td>{{ $detail->status }}</td>
             <td width="1%" style="white-space: nowrap">
               <a target="_blank" href="{{ route('kwitansi.pembangunan', $detail->id) }}" class="btn btn-info" title="">Print</a> 
 
@@ -69,7 +69,7 @@
 
   $(function() {
     let table =  $("#table-pembangunan").DataTable({
-
+      order : [],
       dom:  '<"html5buttons"B>lfrtip',
       buttons: [
 

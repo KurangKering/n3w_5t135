@@ -41,7 +41,12 @@
 					@csrf
 					{{method_field("PATCH")}}
 					<div class="ibox-content">
-
+						<div class="form-group">
+							<label class="control-label col-lg-2">Dari</label>
+							<div class="col-lg-10">
+								<input type="text" class="form-control" name="dari" id="dari" value="{{$pengeluaran_lain->dari}}">
+							</div>
+						</div>
 
 						<div class="form-group">
 							<label class="control-label col-lg-2">Jenis Pembayaran</label>
