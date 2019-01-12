@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth']], function() {
 	|
  	*/
 	Route::get('jsonDataTables/semua_calon_mahasiswa', 'DataTablesJsonController@semua_calon_mahasiswa');
+	Route::get('jsonDataTables/semua_calon_mahasiswa_belum', 'DataTablesJsonController@semua_calon_mahasiswa_belum');
 	Route::get('jsonDataTables/semua_mahasiswa', 'DataTablesJsonController@semua_mahasiswa');
 	Route::get('jsonDataTables/semua_pegawai', 'DataTablesJsonController@semua_pegawai');
 	Route::get('jsonDataTables/semua_pembayaran_semester', 'DataTablesJsonController@semua_pembayaran_semester');
@@ -149,8 +150,33 @@ Route::group(['middleware' => ['auth']], function() {
 	 */
 	Route::get('pemasukan/pembayaran_semester/{mahasiswa_id}/show_data', 'pemasukan\PembayaranSemesterController@getDataPembayaran');
 
-	
+
+
+	Route::post('mahasiswa/import', [
+		'uses' => 'MahasiswaController@import',
+		'as' => 'mahasiswa.import',
+
+	]);
+
+	Route::post('calon_mahasiswa/import', [
+		'uses' => 'CalonMahasiswaController@import',
+		'as' => 'calon_mahasiswa.import',
+
+	]);
+
+	Route::get('calon_mahasiswa/export_empty', [
+		'uses' => 'CalonMahasiswaController@export_empty',
+		'as' => 'calon_mahasiswa.export_empty',
+
+	]);
+
+	Route::get('calon_mahasiswa/export', [
+		'uses' => 'CalonMahasiswaController@export',
+		'as' => 'calon_mahasiswa.export',
+
+	]);
 	Route::resources([
+		'diagram'						=> 'DiagramController',
 		'calon_mahasiswa'				=> 'CalonMahasiswaController',
 		'mahasiswa'                     => 'MahasiswaController',
 		'pegawai'                       => 'PegawaiController',

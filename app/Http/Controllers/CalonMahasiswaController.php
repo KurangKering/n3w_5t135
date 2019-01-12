@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Calon_mahasiswa;
 use LogHelper;
+use App\Exports\CalonMahasiswaEmptyExport;
+use App\Exports\CalonMahasiswaExport;
+use App\Imports\CalonMahasiswaImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 class CalonMahasiswaController extends Controller
 {
     /**
@@ -18,7 +24,7 @@ class CalonMahasiswaController extends Controller
 
      $calon_mahasiswas = Calon_Mahasiswa::get();
      return view('calon_mahasiswa.index',  compact('calon_mahasiswas'));
- }
+   }
 
     /**
      * Show the form for creating a new resource.
@@ -28,7 +34,7 @@ class CalonMahasiswaController extends Controller
     public function create()
     {
       return view('calon_mahasiswa.tambah');
-  }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -51,7 +57,7 @@ class CalonMahasiswaController extends Controller
         'alamat' => 'required',
         'no_hp' => 'required',
         'email' => 'required|email',
-    ]);
+      ]);
 
       $calon_mahasiswa = new Calon_mahasiswa();
       $calon_mahasiswa->nisn = $request->get('nisn');
@@ -73,7 +79,7 @@ class CalonMahasiswaController extends Controller
       return redirect(route('calon_mahasiswa.index'));
 
 
-  }
+    }
 
     /**
      * Show data single mahasiswa beserta data pembayaran semester,
@@ -92,23 +98,23 @@ class CalonMahasiswaController extends Controller
             $iiii->jumlah_bayar_manusia = rupiah($iiii->jumlah_bayar);
 
             $iii->total += $iiii->jumlah_bayar;
-        });
+          });
           $iii->total_manusia = rupiah($iii->total);
           $iii->sisa = $biayaSemester - $iii->total;
           $iii->sisa_manusia = rupiah($iii->sisa);
-      });
-    }
+        });
+      }
 
-    if ($request->wantsJson())
-    {
+      if ($request->wantsJson())
+      {
 
         return $mahasiswa;
-    }
+      }
 
-    return $mahasiswa;
+      return $mahasiswa;
       // return view('calon_mahasiswa.detail', compact('mahasiswa'));
 
-}
+    }
     /**
      * Show data single mahasiswa beserta data pembangunan,
      * route('mahasiswa/show_pembangunan/{mahasiswa_id}')
@@ -126,21 +132,21 @@ class CalonMahasiswaController extends Controller
 
           $mahasiswa->pembangunan->total_angka += $iii->jumlah_bayar;
           $mahasiswa->pembangunan->total += $iii->jumlah_bayar;
-      });
+        });
         $mahasiswa->pembangunan->total = rupiah($mahasiswa->pembangunan->total);  
 
-    }
+      }
 
-    if ($request->wantsJson())
-    {
+      if ($request->wantsJson())
+      {
 
         return $mahasiswa;
-    }
+      }
 
-    return $mahasiswa;
+      return $mahasiswa;
       // return view('calon_mahasiswa.detail', compact('mahasiswa'));
 
-}
+    }
 
     /**
      * Display the specified resource.
@@ -162,21 +168,21 @@ class CalonMahasiswaController extends Controller
           $iii->jumlah_bayar_manusia = rupiah($jumlahBayar);
 
           $mahasiswa->pendaftaran->total += $jumlahBayar;
-      });
+        });
 
         $mahasiswa->pendaftaran->total = rupiah($mahasiswa->pendaftaran->total);  
-    }
+      }
 
 
-    if ($request->wantsJson())
-    {
+      if ($request->wantsJson())
+      {
 
         return $mahasiswa;
-    }
+      }
 
-    return $mahasiswa;
+      return $mahasiswa;
       // return view('calon_mahasiswa.detail', compact('mahasiswa'));
-}
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -188,7 +194,7 @@ class CalonMahasiswaController extends Controller
     {
       $mahasiswa = Calon_Mahasiswa::find($id);
       return view('calon_mahasiswa.edit', compact('mahasiswa'));
-  }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -212,7 +218,7 @@ class CalonMahasiswaController extends Controller
         'alamat' => 'required',
         'no_hp' => 'required',
         'email' => 'required|email',
-    ]);
+      ]);
 
 
       $mahasiswa                   = Calon_Mahasiswa::find($id);
@@ -228,12 +234,13 @@ class CalonMahasiswaController extends Controller
       $mahasiswa->alamat           = $request->get('alamat');
       $mahasiswa->no_hp            = $request->get('no_hp');
       $mahasiswa->email            = $request->get('email');
+      $mahasiswa->status            = $request->get('status');
 
       $mahasiswa->save();
       LogHelper::addToLog('Merubah Data Calon Mahasiswa dengan id_calon_mahasiswa : '. $mahasiswa->getKey());
 
       return redirect(route('calon_mahasiswa.index'));
-  }
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -249,10 +256,106 @@ class CalonMahasiswaController extends Controller
 
      return redirect(route('mahasiswa.index'));
 
- }
+   }
+   /**
+    * Import data calon mahasiswa menggunakan excel 
+    * Plugin Maaatwebsite Excel 3.1
+    * 
+    * route('calon_mahasiswa.import')
+    * url('calon_mahasiswa/import')
+    */
+   public function import(Request $request)
+   {
+    $file = $request->file('file-excel');
 
- public function kodok()
- {
-    return 'sadfasfas';
-}
+    $collection = Excel::toCollection(new CalonMahasiswaImport, $file);
+    $calons = $collection[0];
+    $arr = [
+      "nisn",
+      "nama",
+      "tanggal_masuk",
+      "program_studi",
+      "tahun_masuk",
+      "tempat_lahir",
+      "tanggal_lahir",
+      "jenis_kelamin",
+      "agama",
+      "asal_sekolah",
+      "alamat",
+      "no_hp",
+      "email" ];
+      $input = [];
+      $no = 0;
+
+      //import to collection
+      foreach ($calons as $k => $calon) {
+        if ($k < 1) continue;
+        foreach ($calon as $kk => $c) {
+          if ($arr[$kk] == 'tanggal_masuk' || $arr[$kk] == 'tanggal_lahir') {
+           $UNIX_DATE = ($c - 25569) * 86400;
+           $c = gmdate("Y-m-d", $UNIX_DATE);
+         }
+         $input[$no][$arr[$kk]] = $c;
+       }
+       $input[$no]['status'] = 0;
+       $input[$no]['created_at'] = date('Y-m-d H:i:s');
+       $input[$no]['updated_at'] = date('Y-m-d H:i:s');
+       $no++;
+     } 
+
+     $response = [];
+     foreach ($input as $key => $calon) {
+      $resp['nisn'] = $calon['nisn'];
+      $resp['nama'] = $calon['nama'];
+      $resp['success'] = true;
+      try{
+        $calon = Calon_mahasiswa::insert($calon);
+        LogHelper::addToLog('Menambah Data Calon Mahasiswa dengan id_calon_mahasiswa : '. $calon->getKey());
+        $resp['msg'] =  'Berhasil Menambah Calon Mahasiswa'; 
+
+      }
+      catch(QueryException $e){
+        $resp['success'] = false;        
+        $resp['code'] =  $e->errorInfo[1]; 
+        $resp['msg'] =  $e->getMessage(); 
+      }
+
+      $response[] = $resp;
+
+
+    }
+
+    return response()->json($response);
+
+
+  }
+
+
+    /**
+    * Export data calon mahasiswa menggunakan excel 
+    * Plugin Maaatwebsite Excel 3.1
+    * 
+    * route('calon_mahasiswa.export')
+    * url('calon_mahasiswa/export')
+    */
+    public function export() 
+    {
+      return (new CalonMahasiswaExport())->download("status-0-".date('Y-m-d H:i:s').".xlsx");
+
+
+    }
+
+  /**
+    * Export data calon mahasiswa menggunakan excel 
+    * Plugin Maaatwebsite Excel 3.1
+    * 
+    * route('calon_mahasiswa.export')
+    * url('calon_mahasiswa/export')
+    */
+  public function export_empty() 
+  {
+    return (new CalonMahasiswaEmptyExport())->download('template-import.xlsx');
+
+
+  }
 }

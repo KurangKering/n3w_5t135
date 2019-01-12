@@ -76,4 +76,9 @@ return [
 		'0'  => 'belum lulus',
 		'-1'  => 'tidak lulus',
 	],
+
+	'status_mahasiswa' => [
+		'1' => 'Aktif',
+		'-1' => 'Tidak Aktif',
+	]
 ];

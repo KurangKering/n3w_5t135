@@ -48,8 +48,8 @@
         </li>
         @elseif (Auth::user()->hasRole('Member'))
 
-        <li class="{{ active_sidebar('calon_mahasiswa') }}" ><a href="{{ route('calon_mahasiswa.index') }}"> <span class="nav-label">Data Calon Mahasiswa</span></a>
-        <li class="{{ active_sidebar('mahasiswa') }}" ><a href="{{ route('mahasiswa.index') }}"> <span class="nav-label">Data Mahasiswa</span></a>
+        <li class="{{ active_sidebar('calon_mahasiswa*') }}" ><a href="{{ route('calon_mahasiswa.index') }}"> <span class="nav-label">Data Calon Mahasiswa</span></a></li>
+        <li class="{{ active_sidebar('mahasiswa*') }}" ><a href="{{ route('mahasiswa.index') }}"> <span class="nav-label">Data Mahasiswa</span></a>
         </li>
         <li class="{{ active_sidebar('pegawai') }}"><a href="{{ route('pegawai.index')  }}"> <span class="nav-label">Data Pegawai</span></a>
         </li>
@@ -70,6 +70,7 @@
                 <li class="{{ active_sidebar('*pengeluaran_lain*') }}"><a href="{{ route('pengeluaran_lain.index') }}">Pengeluaran Lain</a></li>
             </ul>
         </li>
+        <li class="{{ active_sidebar('diagram') }}" ><a href="{{ route('diagram.index') }}"> <span class="nav-label">Diagram</span></a></li>
 
         @endif
     </ul>

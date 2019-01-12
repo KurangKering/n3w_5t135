@@ -52,22 +52,17 @@
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Nama</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="nama_mhs" value="{{ $mahasiswa->nama_mhs }}" >
+						<input  class="form-control" name="nama" value="{{ $mahasiswa->calon_mahasiswa->nama }}" >
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="" class="control-label col-lg-2">Jenis Kelas</label>
-					<div class="col-lg-10">
-						<input  class="form-control" name="jenis_kelas" value="{{ $mahasiswa->jenis_kelas }}" >
-					</div>
-				</div>
+				
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Program Studi</label>
 					<div class="col-lg-10">
 						<select class="form-control" name="program_studi">
 							@foreach (Config::get('enums.program_studi') as $index => $program_studi)
 							<option  value="{{ $program_studi }}"
-							@if ($program_studi == $mahasiswa->program_studi)
+							@if ($program_studi == $mahasiswa->calon_mahasiswa->program_studi)
 							selected="selected"
 							@endif
 							>{{ $program_studi }}</option>
@@ -78,19 +73,19 @@
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Tahun Masuk</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="tahun_masuk" value="{{ $mahasiswa->tahun_masuk }}" >
+						<input  class="form-control" name="tahun_masuk" value="{{ $mahasiswa->calon_mahasiswa->tahun_masuk }}" >
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Tempat Lahir</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="tempat_lahir" value="{{ $mahasiswa->tempat_lahir }}" >
+						<input  class="form-control" name="tempat_lahir" value="{{ $mahasiswa->calon_mahasiswa->tempat_lahir }}" >
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Tanggal Lahir</label>
 					<div class="col-lg-10">
-						<input  class="form-control" type="date"  name="tanggal_lahir" value="{{ $mahasiswa->tanggal_lahir }}">
+						<input  class="form-control" type="date"  name="tanggal_lahir" value="{{ $mahasiswa->calon_mahasiswa->tanggal_lahir }}">
 					</div>
 				</div>
 				<div class="form-group">
@@ -99,7 +94,7 @@
 						<select class="form-control" name="jenis_kelamin">
 							@foreach (Config::get('enums.jenis_kelamin') as $index => $jenis_kelamin)
 							<option value="{{ $jenis_kelamin }}"
-							@if ($jenis_kelamin == $mahasiswa->jenis_kelamin)
+							@if ($jenis_kelamin == $mahasiswa->calon_mahasiswa->jenis_kelamin)
 							selected="selected" 
 							@endif
 							>{{ $jenis_kelamin }}</option>
@@ -114,7 +109,7 @@
 							@foreach (Config::get('enums.agama') as $index => $agama)
 							<option value="{{ $agama }}"
 
-							@if ($agama == $mahasiswa->agama)
+							@if ($agama == $mahasiswa->calon_mahasiswa->agama)
 							selected="selected"
 							@endif
 							>{{ $agama }}</option>
@@ -125,29 +120,44 @@
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Asal Sekolah</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="asal_sekolah" value="{{ $mahasiswa->asal_sekolah }}">
+						<input  class="form-control" name="asal_sekolah" value="{{ $mahasiswa->calon_mahasiswa->asal_sekolah }}">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Alamat</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="alamat" value="{{ $mahasiswa->alamat }}">
+						<input  class="form-control" name="alamat" value="{{ $mahasiswa->calon_mahasiswa->alamat }}">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">No Hp</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="no_hp" value="{{ $mahasiswa->no_hp }}" >
+						<input  class="form-control" name="no_hp" value="{{ $mahasiswa->calon_mahasiswa->no_hp }}" >
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="" class="control-label col-lg-2">Email</label>
 					<div class="col-lg-10">
-						<input  class="form-control" name="email" value="{{ $mahasiswa->email }}">
+						<input  class="form-control" name="email" value="{{ $mahasiswa->calon_mahasiswa->email }}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="" class="control-label col-lg-2">Status</label>
+					<div class="col-lg-10">
+						<select class="form-control" name="status_mahasiswa">
+							@foreach (Config::get('enums.status_mahasiswa') as $index => $status)
+							<option value="{{ $index }}"
+
+							@if ($index == $mahasiswa->status_mahasiswa)
+							selected="selected"
+							@endif
+							>{{ $status }}</option>
+							@endforeach
+						</select>
 					</div>
 				</div>
 				<div class="text-center">
-					<button type="submit" class="btn btn-primary ">Tambah</button>
+					<button type="submit" class="btn btn-primary ">Ubah Data</button>
 				</div>
 			</form>
 		</div>

@@ -29,11 +29,7 @@
           <td>:</td>
           <td><span id="nim"></span></td>
         </tr>
-        <tr>
-          <th>Kelas</th>
-          <td>:</td>
-          <td><span id="jenis_kelas"></span></td>
-        </tr>
+        
         <tr>
           <th>Program Studi</th>
           <td>:</td>
@@ -146,7 +142,6 @@
  {
   $("#nama_mhs").text(data.calon_mahasiswa.nama);
   $("#nim").text(data.nim);
-  $("#jenis_kelas").text(data.calon_mahasiswa.jenis_kelas);
   $("#prodi").text(data.calon_mahasiswa.program_studi);
   $("#angkatan").text(data.calon_mahasiswa.tahun_masuk);
   $("#jk").text(data.calon_mahasiswa.jenis_kelamin);

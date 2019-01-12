@@ -141,6 +141,31 @@
 						<input  class="form-control" name="email" value="{{ $mahasiswa->email }}">
 					</div>
 				</div>
+				<div class="form-group">
+					<label for="" class="control-label col-lg-2">Status</label>
+					<div class="col-lg-10">
+						@if ($mahasiswa->status == 1)
+						<input type="text" class="form-control" readonly  value="{{ Config::get('enums.status_calon_mahasiswa')[$mahasiswa->status] }}">
+						@else
+						<select class="form-control" name="status">
+							@php
+							$calons = Config::get('enums.status_calon_mahasiswa');
+							unset($calons[1]);
+
+
+							@endphp
+							@foreach ( $calons as $index => $status)
+							<option value="{{ $index }}"
+
+							@if ($index == $mahasiswa->status)
+							selected="selected"
+							@endif
+							>{{ $status }}</option>
+							@endforeach
+						</select>
+						@endif
+					</div>
+				</div>
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary ">Tambah</button>
 				</div>

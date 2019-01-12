@@ -15,9 +15,15 @@ use App\Pengeluaran_lain;
 
 class DataTablesJsonController extends Controller
 {
+	public function semua_calon_mahasiswa_belum() 
+	{
+		$calon = Calon_mahasiswa::where('status', '0')->get();
+		return DataTables::of($calon)
+		->make(true);
+	}
 	public function semua_calon_mahasiswa()
 	{
-		$mahasiswas = Calon_mahasiswa::with('pendaftaran.pendaftaran_det')->latest()->get();
+		$mahasiswas = Calon_mahasiswa::with('pendaftaran.pendaftaran_det')->where('status', '!=', '-1')->latest()->get();
 		$mahasiswas->each(function($ii) {
 			if ($ii->pendaftaran) {
 				$ii->pendaftaran->pendaftaran_det->each(function($iii) use($ii) {

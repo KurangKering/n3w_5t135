@@ -29,11 +29,7 @@
           <td>:</td>
           <td><span id="nisn"></span></td>
         </tr>
-        <tr>
-          <th>Kelas</th>
-          <td>:</td>
-          <td><span id="jenis_kelas"></span></td>
-        </tr>
+        
         <tr>
           <th>Program Studi</th>
           <td>:</td>
@@ -146,7 +142,6 @@
  {
   $("#nama").text(data.nama);
   $("#nisn").text(data.nisn);
-  $("#jenis_kelas").text(data.jenis_kelas);
   $("#prodi").text(data.program_studi);
   $("#angkatan").text(data.tahun_masuk);
   $("#jk").text(data.jenis_kelamin);
