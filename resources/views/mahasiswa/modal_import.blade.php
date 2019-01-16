@@ -76,7 +76,7 @@
     // history: false,
     // restoreDefaultContent: false,
     // autoOpen: 0, // Boolean, Number
-    bodyOverflow: true,
+    bodyOverflow: false,
     // fullscreen: true,
        // openFullscreen: true,
        closeOnEscape: false,
@@ -97,10 +97,10 @@
     // onFullscreen: function(){},
     // onResize: function(){},
     onOpening: function(modal){
-      modal.startLoading();
+      // modal.startLoading();
     },
     onOpened: function(modal){
-      modal.stopLoading();
+      // modal.stopLoading();
     },
     // onClosing: function(){},
     // onClosed: function(){},

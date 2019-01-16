@@ -22,6 +22,7 @@ class DashboardController extends Controller
 	public function index()
 	{
 		
+		
 		// $pembayaran_semesters = DB::table('pembayaran_semesters')
 		// ->select(
 		// 	DB::raw(' "pemasukan" as jenis_transaksi, "pembayaran_semester" as detail_transaksi, pemasukans.transaksi_id,

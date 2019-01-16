@@ -46,6 +46,9 @@
         <li class="{{ active_sidebar('history') }}">
             <a href="{{ route('history.index') }}"> <span class="nav-label">History</span></a>
         </li>
+
+        <li class="{{ active_sidebar('diagram') }}" ><a href="{{ route('diagram.index') }}"> <span class="nav-label">Diagram</span></a></li>
+        
         @elseif (Auth::user()->hasRole('Member'))
 
         <li class="{{ active_sidebar('calon_mahasiswa*') }}" ><a href="{{ route('calon_mahasiswa.index') }}"> <span class="nav-label">Data Calon Mahasiswa</span></a></li>
@@ -70,7 +73,6 @@
                 <li class="{{ active_sidebar('*pengeluaran_lain*') }}"><a href="{{ route('pengeluaran_lain.index') }}">Pengeluaran Lain</a></li>
             </ul>
         </li>
-        <li class="{{ active_sidebar('diagram') }}" ><a href="{{ route('diagram.index') }}"> <span class="nav-label">Diagram</span></a></li>
 
         @endif
     </ul>

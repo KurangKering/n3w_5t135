@@ -54,6 +54,8 @@ td, th {
 
 						</tr>
 					</thead>
+					@php
+					@endphp
 					<tbody>
 						@foreach ($transaksis as $index => $transaksi )
 						@php
@@ -63,8 +65,8 @@ td, th {
 						@endphp
 						<tr>
 							<td>{{ $transaksi->transaksi_id}}</td>
-							<td>{{ $transaksi->jenis_transaksi == 'pemasukan' ? $transaksi->detail_transaksi . $jenis_lain : '-' }}</td>
-							<td>{{ $transaksi->jenis_transaksi == 'pengeluaran' ? $transaksi->detail_transaksi . $jenis_lain : '-' }}</td>
+							<td>{{ $transaksi->jenis_transaksi == 'pemasukan' ? Config::get('enums.jenis_transaksi')['pemasukan'][$transaksi->detail_transaksi] . $jenis_lain : '-' }}</td>
+							<td>{{ $transaksi->jenis_transaksi == 'pengeluaran' ? Config::get('enums.jenis_transaksi')['pengeluaran'][$transaksi->detail_transaksi] . $jenis_lain : '-' }}</td>
 
 							<td>{{ indonesian_date($transaksi->tanggal_bayar) }}</td>
 							<td>{{ rupiah($transaksi->total_bayar) }}</td>

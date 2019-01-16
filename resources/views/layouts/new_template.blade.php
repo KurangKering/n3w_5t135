@@ -112,7 +112,7 @@
 
 
 <!-- jQuery UI -->
-<script src="{{ asset('templates/inspinia_271/js/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+{{-- <script src="{{ asset('templates/inspinia_271/js/plugins/jquery-ui/jquery-ui.min.js') }}"></script> --}}
 <script src="{{ asset('js/convert_rupiah.js') }}"></script>
 <script>
 

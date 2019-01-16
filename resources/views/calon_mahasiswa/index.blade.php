@@ -134,7 +134,6 @@
 
 		let $btnImport = $("#btn-import");
 
-
 		$btnImport.click(function(event) {
 			$("#result-area").html('');
 			show_modal_import();

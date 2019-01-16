@@ -24,7 +24,7 @@ class SistemController extends Controller
     public function create()
     {
         return view('sistem.tambah');
-        
+
     }
 
     /**

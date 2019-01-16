@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Pegawai;
+use Illuminate\Http\Request;
 use LogHelper;
+
 class PegawaiController extends Controller
 {
     /**
@@ -15,8 +16,8 @@ class PegawaiController extends Controller
     public function index()
     {
 
-    	$pegawais = Pegawai::get();
-    	return view('pegawai.index',  compact('pegawais'));
+        $pegawais = Pegawai::get();
+        return view('pegawai.index', compact('pegawais'));
     }
 
     /**
@@ -26,7 +27,7 @@ class PegawaiController extends Controller
      */
     public function create()
     {
-    	return view('pegawai.tambah');
+        return view('pegawai.tambah');
     }
 
     /**
@@ -38,19 +39,19 @@ class PegawaiController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'nip' => 'required|unique:pegawais,nip',
-            'nama_pegawai' => 'required',
-            'jabatan' => 'required',
-            'tempat_lahir' => 'required',
+            'nip'           => 'required|unique:pegawais,nip',
+            'nama_pegawai'  => 'required',
+            'jabatan'       => 'required',
+            'tempat_lahir'  => 'required',
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
-            'agama' => 'required',
-            'no_hp' => 'required',
-            'email' => 'required|email',
-            'status' => 'required',
+            'agama'         => 'required',
+            'no_hp'         => 'required',
+            'email'         => 'required|email',
+            'status'        => 'required',
 
         ]);
-        $pegawai                  = new Pegawai();
+        $pegawai                = new Pegawai();
         $pegawai->nip           = $request->get('nip');
         $pegawai->nama_pegawai  = $request->get('nama_pegawai');
         $pegawai->jabatan       = $request->get('jabatan');
@@ -62,7 +63,7 @@ class PegawaiController extends Controller
         $pegawai->email         = $request->get('email');
         $pegawai->status        = $request->get('status');
         $pegawai->save();
-        LogHelper::addToLog('Menambah Data Pegawai dengan id_pegawai : '. $pegawai->getKey());
+        LogHelper::addToLog('Menambah Data Pegawai dengan id_pegawai : ' . $pegawai->getKey());
 
         return redirect(route('pegawai.index'));
 
@@ -76,7 +77,7 @@ class PegawaiController extends Controller
      */
     public function show(Request $request, $id)
     {
-    	$pegawai = Pegawai::findOrFail($id);
+        $pegawai                        = Pegawai::findOrFail($id);
         $pegawai->tanggal_lahir_manusia = indonesian_date($pegawai->tanggal_lahir);
         if ($request->wantsJson()) {
             return $pegawai;
@@ -92,8 +93,8 @@ class PegawaiController extends Controller
      */
     public function edit($id)
     {
-    	$pegawai = Pegawai::find($id);
-    	return view('pegawai.edit', compact('pegawai'));
+        $pegawai = Pegawai::find($id);
+        return view('pegawai.edit', compact('pegawai'));
     }
 
     /**
@@ -105,35 +106,35 @@ class PegawaiController extends Controller
      */
     public function update(Request $request, $id)
     {
-     $this->validate($request, [
-        'nip' => 'required|unique:pegawais,nip,'. $id,
-        'nama_pegawai' => 'required',
-        'jabatan' => 'required',
-        'tempat_lahir' => 'required',
-        'tanggal_lahir' => 'required',
-        'jenis_kelamin' => 'required',
-        'agama' => 'required',
-        'no_hp' => 'required',
-        'email' => 'required|email',
+        $this->validate($request, [
+            'nip'           => 'required|unique:pegawais,nip,' . $id,
+            'nama_pegawai'  => 'required',
+            'jabatan'       => 'required',
+            'tempat_lahir'  => 'required',
+            'tanggal_lahir' => 'required',
+            'jenis_kelamin' => 'required',
+            'agama'         => 'required',
+            'no_hp'         => 'required',
+            'email'         => 'required|email',
 
-    ]);
+        ]);
 
-     $pegawai                  = Pegawai::find($id);
-     $pegawai->nip           = $request->get('nip');
-     $pegawai->nama_pegawai  = $request->get('nama_pegawai');
-     $pegawai->jabatan       = $request->get('jabatan');
-     $pegawai->tempat_lahir  = $request->get('tempat_lahir');
-     $pegawai->tanggal_lahir = $request->get('tanggal_lahir');
-     $pegawai->jenis_kelamin = $request->get('jenis_kelamin');
-     $pegawai->agama         = $request->get('agama');
-     $pegawai->no_hp         = $request->get('no_hp');
-     $pegawai->email         = $request->get('email');
-     $pegawai->status         = $request->get('status');
-     $pegawai->save();
-     LogHelper::addToLog('Merubah Data Pegawai dengan id_pegawai : '. $pegawai->getKey());
+        $pegawai                = Pegawai::find($id);
+        $pegawai->nip           = $request->get('nip');
+        $pegawai->nama_pegawai  = $request->get('nama_pegawai');
+        $pegawai->jabatan       = $request->get('jabatan');
+        $pegawai->tempat_lahir  = $request->get('tempat_lahir');
+        $pegawai->tanggal_lahir = $request->get('tanggal_lahir');
+        $pegawai->jenis_kelamin = $request->get('jenis_kelamin');
+        $pegawai->agama         = $request->get('agama');
+        $pegawai->no_hp         = $request->get('no_hp');
+        $pegawai->email         = $request->get('email');
+        $pegawai->status        = $request->get('status');
+        $pegawai->save();
+        LogHelper::addToLog('Merubah Data Pegawai dengan id_pegawai : ' . $pegawai->getKey());
 
-     return redirect(route('pegawai.index'));
- }
+        return redirect(route('pegawai.index'));
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -143,9 +144,9 @@ class PegawaiController extends Controller
      */
     public function destroy($id)
     {
-    	$pegawai = Pegawai::find($id);
-    	$pegawai->delete();
-        LogHelper::addToLog('Menghapus Data Pegawai dengan id_pegawai : '. $pegawai->getKey());
+        $pegawai = Pegawai::find($id);
+        $pegawai->delete();
+        LogHelper::addToLog('Menghapus Data Pegawai dengan id_pegawai : ' . $pegawai->getKey());
 
         return redirect(route('pegawai.index'));
     }

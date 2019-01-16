@@ -54,7 +54,7 @@
       
     </div>
     <div class="box-footer">
-      
+
     </div>
   </div>
 </div>
@@ -93,7 +93,7 @@
     // history: false,
     // restoreDefaultContent: false,
     // autoOpen: 0, // Boolean, Number
-    bodyOverflow: true,
+    bodyOverflow: false,
     // fullscreen: true,
        // openFullscreen: true,
     // closeOnEscape: true,
@@ -114,10 +114,10 @@
     // onFullscreen: function(){},
     // onResize: function(){},
     onOpening: function(modal){
-      modal.startLoading();
+      // modal.startLoading();
     },
     onOpened: function(modal){
-      modal.stopLoading();
+      // modal.stopLoading();
     },
     // onClosing: function(){},
     // onClosed: function(){},
@@ -126,6 +126,7 @@
 
   var show_modal = function(id)
   {
+
    axios.get('{{ url('mahasiswa/') . '/' }}'+id, {
    })
    .then(res => {

@@ -68,10 +68,18 @@ Route::group(['middleware' => ['auth']], function() {
 	});
 
 	Route::group(['middleware' => ['role:Ketua']], function() {
+
+		Route::post('diagram/get_data', [
+			'as' => 'diagram.get_data',
+			'uses' => 'DiagramController@get_data',
+		]);
+
+
 		Route::resources([
 			'laporan'                         => 'LaporanController',
 			'history'                     => 'HistoryController',
 
+			'diagram'						=> 'DiagramController',
 
 		]);
 	});
@@ -176,7 +184,6 @@ Route::group(['middleware' => ['auth']], function() {
 
 	]);
 	Route::resources([
-		'diagram'						=> 'DiagramController',
 		'calon_mahasiswa'				=> 'CalonMahasiswaController',
 		'mahasiswa'                     => 'MahasiswaController',
 		'pegawai'                       => 'PegawaiController',
